@@ -1,5 +1,9 @@
 @echo off
-mkdir bin
+
+pushd raylib\src
+mingw32-make PLATFORM=PLATFORM_DESKTOP
+popd
+
 pushd bin
-cl -Zi -FeSpaceEvaders ../src/engine.cpp
+g++ ../src/engine.cpp -o SpaceEvaders.exe -I ../raylib/src/ -L ../raylib/src/ -lraylib -lopengl32 -lgdi32 -lwinmm  
 popd
