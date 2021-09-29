@@ -1,12 +1,17 @@
-#include "raylib.h"
+//#include "raylib.h"
+
+#include <iostream>
+
+using namespace std;
 
 int main(void)
 {
     const int screenWidth = 800;
     const int screenHeight = 450;
     
-    InitWindow(screenWidth, screenHeight, "Space Evaders");
-    SetTargetFPS(60);
+    /*
+    //InitWindow(screenWidth, screenHeight, "Space Evaders");
+    //SetTargetFPS(60);
     
     
     // Main engine loop
@@ -24,6 +29,9 @@ int main(void)
     
     // Close window and OpenGL context
     CloseWindow();
+    */
+    
+    cout << "Hello, World!" << endl;
     
     return 0;
 }
