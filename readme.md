@@ -15,3 +15,17 @@ build.bat
 
 If it fails, it is likely that you do not have MinGW properly setup 
 in your system environment variables.
+
+## Possible errors when building
+
+I found that I had two version of g++ installed, resulting in 64 bit binaries and 32 bit gdb.
+This meant that I was unable to debug the binaries after building, heavily impeding development.
+
+Simply run 
+
+```bash
+where g++
+``` 
+
+In any command prompt to find if you have multiple versions of g++. You can try a similar process for
+checking on multiple versions of gdb.
