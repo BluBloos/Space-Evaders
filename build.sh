@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pushd raylib\src
+pushd raylib/src
 make PLATFORM=PLATFORM_DESKTOP
 popd
 
