@@ -1,10 +1,11 @@
 #!/bin/bash
 
 pushd raylib/src
+export MACOSX_DEPLOYMENT_TARGET=10.9
 make PLATFORM=PLATFORM_DESKTOP
 popd
 
 mkdir bin
 pushd bin
-g++ ../src/engine.cpp -o SpaceEvaders.exe -I ../src/ -I ../raylib/src/ -ggdb -L ../raylib/src/ -lraylib -lopengl32 -lgdi32 -lwinmm  
+clang++ -g -std=c++11 -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL ../src/engine.cpp -o SpaceEvaders -I ../src/ -I ../raylib/src -L ../raylib/src/  -lraylib
 popd

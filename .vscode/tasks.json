@@ -6,7 +6,8 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "./build",
+            "command": "./build.sh",
+            "windows": { "command": "./build.bat" },
             "group": "build",
             "presentation": {
                 "reveal": "always" 
