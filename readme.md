@@ -46,3 +46,33 @@ To check for multiple versions run the following.
 ```bash
 where g++
 ``` 
+
+## Git and JIRA Workflow
+
+Step 1:
+
+Go into JIRA, click on the issue, scroll down, hit "Create branch".
+Give the branch a short name and remember that name. Let's call it <branch-name>
+
+On your computer run
+```bash
+git checkout master
+git pull
+git checkout -d <branch_name>
+```
+
+Write the code for the feature. Make many commits, etc. 
+
+Once you are ready to upload the feature to the remote repository...
+
+Run
+git push
+```
+
+Git will complain. Do exactly what is says to do and all will be well. Finally, 
+create a pull request in JIRA for your issue.
+
+Once the entire team has given the code the "go-ahead",
+you can merge the issue into the master branch.
+
+
