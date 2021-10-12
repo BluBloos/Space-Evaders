@@ -13,7 +13,7 @@ class Player : public RenderableEntity{
     private:
         // attr
         float curVerSpeed;
-        const float horSpeed{350.0f};
+        const float horSpeed{600.0f};
         const float verSpeed{310.0f};
         bool canJump;
         bool touchGround;
