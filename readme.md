@@ -52,13 +52,13 @@ where g++
 Step 1:
 
 Go into JIRA, click on the issue, scroll down, hit "Create branch".
-Give the branch a short name and remember that name. Let's call it <branch-name>
+Give the branch a short name and remember that name. Let's call it "branch-name"
 
 On your computer run
 ```bash
 git checkout master
 git pull
-git checkout -d <branch_name>
+git checkout -b "branch_name"
 ```
 
 Write the code for the feature. Make many commits, etc. 
