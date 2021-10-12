@@ -1,21 +1,33 @@
-#include <raylib_wrapped.h>
-#include <entity.h>
-#include "iostream"
+#include "header/entity.h"
 
-Vector2 Entity::GetPos() {
-    return this->pos;
-}
-
+// Constructors
 Entity::Entity() {
     this->pos = Vector2({0.0f,0.0f});
 }
-
-void Entity::Update() {
-    // Does nothing, for now...
+Entity::Entity(Vector2 p, int layer){
+    this->pos = p;
+    this->collisionLayer = layer;
 }
-
-// NOTE(Noah): This code is going to be changed. Just wanted to write something
-// down for testing purposes.
-void RenderableEntity::Update() {
-    DrawCircleV(Vector2({100.0f, 100.0f}), 100.0f, Color({190, 33, 55, 255}));
+// Destructor
+Entity::~Entity(){
+    delete this;
 }
+// Set, get
+Vector2 Entity::GetPos() {
+    return this->pos;
+}
+void Entity::SetPos(Vector2 p){
+    this->pos = p;
+}
+int Entity::GetLayer(){
+    return this->collisionLayer;
+}
+// public functions
+void Entity::update(){}
+
+
+// Constructors
+RenderableEntity::RenderableEntity(){}
+RenderableEntity::RenderableEntity(Vector2 v, int layer):Entity(v, layer){}
+// public functions
+void RenderableEntity::update(){}

@@ -1,26 +1,30 @@
-#include "raylib_wrapped.h" // wrapped to avoid double inclusion.
-#include "iostream"
-#include <game.h>
-#include <entity.cpp>
+#include <iostream>
+#include <vector>
+#include "player.cpp"
+#include "entity.cpp"
+#include "ground.cpp"
+#include "header/game.h"
+
 
 // Define the things that happen when the game is initialized.
 Game::Game() {
-    std::cout << "Game has been initialized" << std::endl;
-
+    std::cout << "Game has been initialized\n\n";
     // Create game entities.
-    this->entities.push_back(new RenderableEntity());
+    characters.push_back(new Player(Vector2{500.0f, 100.0f}, 0));
+    grounds.push_back(new Ground(Vector2{0.0f, 400.0f}, 0));
 }
 
 // Define what will happen each frame of the game.
 void Game::GameUpdateAndRender() {
-    BeginDrawing();
+    BeginDrawing(); 
     ClearBackground(RAYWHITE);
-    DrawText("Hello, World!", 190, 200, 20, LIGHTGRAY);
 
     // Go through loop of all entities and call update.
-    for (Entity *entity : this->entities) {
-        
-        entity->Update();
+    for (Entity *entity : characters) {
+        entity->update();
+    }    
+    for (Entity *entity : grounds) {
+        entity->update();
     }
 
     EndDrawing();
@@ -30,10 +34,14 @@ void Game::GameUpdateAndRender() {
 Game::~Game() {
 
     // Clean up entities.
-    for (unsigned int i = 0; i < this->entities.size(); i++) {
-        Entity *entity = this->entities[i];
+    for (unsigned int i = 0; i < characters.size(); i++) {
+        Entity *entity = characters[i];
         delete entity; // NOTE(Noah): Pretty sure this works...
     }
+    for (unsigned int i = 0; i < grounds.size(); i++) {
+        Entity *entity = grounds[i];
+        delete entity;
+    }
 
-    std::cout << "Game has been closed" << std::endl;
+    std::cout << "Game has been closed\n";
 }

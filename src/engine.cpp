@@ -1,16 +1,16 @@
 // wrapped to avoid double inclusion.
-#include "raylib_wrapped.h"
-
 // Directly include the game code. Single file compilation model.
 #include "game.cpp"
+#include "header/raylib_wrapped.h"
+
 
 int main(void)
 {
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenWidth = 885;
+    const int screenHeight = 500;
     
     // Make a new game object.
-    // Thus calling the game initialization code.
+    // // Thus calling the game initialization code.
     Game *myGame = new Game();
     
     InitWindow(screenWidth, screenHeight, "Space Evaders");
