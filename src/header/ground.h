@@ -11,6 +11,9 @@ class Ground : public RenderableEntity{
         // func
         void update() override;
         bool TouchGround(Player*, float);
+    private:
+        float horSpeed;
+        float verSpeed;
 };
 
 #endif
