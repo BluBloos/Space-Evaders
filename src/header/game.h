@@ -1,10 +1,8 @@
-#pragma once
+#ifndef GAME_H
+#define GAME_H
 
 #include "entity.h"
 #include <vector>
-
-std::vector<Entity *> characters;
-std::vector<Entity *> grounds;
 
 class Game {
     
@@ -12,11 +10,19 @@ class Game {
         Game(); // Constructor
         ~Game(); // Destructor
     
-    public:
         // Function for game to implement and is to be called for each frame
         // to be rendered.    
         void GameUpdateAndRender();
+
+        std::vector<Entity *> GetGrounds(); // Will return all the ground entities
+        float GetLastFrameTime();
+
+    private:
+        std::vector<Entity *> characters;
+        std::vector<Entity *> grounds;
 };
+
+#endif
 
 
 
