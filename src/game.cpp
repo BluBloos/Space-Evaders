@@ -11,7 +11,7 @@ Game::Game() {
     std::cout << "Game has been initialized\n\n";
     // Create game entities.
     this->characters.push_back(new Player((Vector2){500.0f, 100.0f}, 0));
-    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0));
+    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 0, 30));
 }
 
 std::vector<Entity *> Game::GetGrounds() {

@@ -55,7 +55,7 @@ void Player::update(Game *game){
     }
 
     // Render the player using raylib DrawCircle function.
-    DrawCircle(this->pos.x, this->pos.y, 50.0f, BLACK);
+    DrawCircle(this->pos.x, this->pos.y, 50.0f, RED);
 }
 
 void Player::run(float delta, float direction){
