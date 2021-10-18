@@ -16,6 +16,7 @@ class Player : public RenderableEntity{
         const float horSpeed = 600.0f;
         const float verSpeed = 310.0f;
         bool inAir;
+        int flipMultiplier;
         
         // The run function for the player updates the horizontal movement of the player based on frame deltaTime
         // and the direction of running.
@@ -23,6 +24,9 @@ class Player : public RenderableEntity{
 
         // Calling the run function will make initiate a player jump sequence.
         void jump();
+
+        // gravity flip function, triggered by pressing f
+        void gravityFlip();
 };
 
 #endif
