@@ -4,12 +4,12 @@
 #include <iostream>
 
 
-Player::Player(Vector2 v, int layer) : RenderableEntity(v, layer){ 
+Player::Player(Vector2 v, int layer) : RenderableEntity(v, layer){
     this->currentVerticalSpeed = 0.0;
     this->inAir = true;
 }
 
-void Player::update(Game *game){ 
+void Player::update(Game *game){
 
     float deltaTime = game->GetLastFrameTime();
 
@@ -17,10 +17,11 @@ void Player::update(Game *game){
     float dir = 0.0f;
     if (IsKeyDown(KEY_A)) {dir = -1.0f;}
     if (IsKeyDown(KEY_D)) {dir = 1.0f;}
-    this->run(deltaTime, dir); 
+    this->run(deltaTime, dir);
 
     // Code for the jumping routine.
     if (IsKeyDown(KEY_SPACE) && !this->inAir) {
+        this->inAir = true;
         this->jump();
     }
 
@@ -28,14 +29,16 @@ void Player::update(Game *game){
     {
         // Check if the player has hit any ground
         std::vector<Entity *> grounds = game->GetGrounds();
-        for (unsigned int i = 0; i < grounds.size(); i++) { 
+        for (unsigned int i = 0; i < grounds.size(); i++) {
             Ground *ground = (Ground *)grounds[i];
-            if (ground->TouchGround(this, deltaTime)){
+            if (ground->TouchGround(this, deltaTime) && this->currentVerticalSpeed >= 0){
                 // The player has collided with the ground. Stop movement.
-                this->inAir = false;
+            	this->inAir = false;
                 this->currentVerticalSpeed = 0.0f;
                 this->pos.y = ground->GetPos().y; // snap the y position of the player.
                 break;
+            } else {
+            	this->inAir = true;
             }
         }
         // TODO: Check if the player is touching the sides of the screen.
@@ -55,7 +58,7 @@ void Player::update(Game *game){
     }
 
     // Render the player using raylib DrawCircle function.
-    DrawCircle(this->pos.x, this->pos.y, 50.0f, RED);
+    DrawCircle(this->pos.x, this->pos.y, 50.0f, BLACK);
 }
 
 void Player::run(float delta, float direction){
@@ -64,7 +67,6 @@ void Player::run(float delta, float direction){
 
 void Player::jump(){
     this->currentVerticalSpeed = -verSpeed;
-    this->inAir = true;
 }
 
 float Player::GetCurrentVerticalSpeed(){

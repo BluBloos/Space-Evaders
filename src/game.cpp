@@ -11,7 +11,7 @@ Game::Game() {
     std::cout << "Game has been initialized\n\n";
     // Create game entities.
     this->characters.push_back(new Player((Vector2){500.0f, 100.0f}, 0));
-    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 0, 30));
+    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 0.0f, 30.0f, 0, -1));
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -31,15 +31,14 @@ void Game::GameUpdateAndRender() {
     float deltaTime = GetFrameTime();
 
     // Go through loop of all entities and call update.
-    for (unsigned int i = 0; i < this->characters.size(); i++) {
-        Entity *entity = this->characters[i];
-        entity->update(this);
-    }
     for (unsigned int i = 0; i < this->grounds.size(); i++) {
         Entity *entity = this->grounds[i];
         entity->update(this);
     }
-
+    for (unsigned int i = 0; i < this->characters.size(); i++) {
+        Entity *entity = this->characters[i];
+        entity->update(this);
+    }
     EndDrawing();
 }
 
@@ -47,14 +46,15 @@ void Game::GameUpdateAndRender() {
 Game::~Game() {
 
     // Clean up entities.
+	for (unsigned int i = 0; i < this->grounds.size(); i++) {
+	        Entity *entity = this->grounds[i];
+	        delete entity;
+	}
     for (unsigned int i = 0; i < this->characters.size(); i++) {
         Entity *entity = this->characters[i];
         delete entity; // NOTE(Noah): Pretty sure this works...
     }
-    for (unsigned int i = 0; i < this->grounds.size(); i++) {
-        Entity *entity = this->grounds[i];
-        delete entity;
-    }
+
 
     std::cout << "Game has been closed\n";
 }
