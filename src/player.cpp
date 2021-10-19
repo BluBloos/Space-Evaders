@@ -54,6 +54,31 @@ void Player::update(Game *game){
         this->currentVerticalSpeed += this->currentVerticalSpeed < 0 ? Entity::gravity * deltaTime : Entity::gravity * deltaTime * 1.5f;
     }
 
+    // Gravity function of the player
+    if (IsKeyDown(KEY_G)) {
+        // Activate the black hole and move all platforms to the player.
+        td::vector<Entity *> grounds = game->GetGrounds();
+        for (unsigned int i = 0; i < grounds.size(); i++) { 
+            Ground *ground = (Ground *)grounds[i];
+            if (ground->IsMovable()) {
+
+                Vector2 new_ground_pos = ground->GetPos();
+
+                // Generate vector from ground to player (this is the vector to apply gravity in).
+                Vector2 gravityDirection;
+                gravityDirection.x = this->pos.x - new_ground_pos.x;
+                gravityDirection.y = this->pos.y - new_ground_pos.y;
+
+                // Normalize the gravity direction vector.
+                
+
+                
+                 
+                ground->SetPos((Vector2){})
+            }
+        }
+    }
+
     // Render the player using raylib DrawCircle function.
     DrawCircle(this->pos.x, this->pos.y, 50.0f, BLACK);
 }

@@ -11,7 +11,13 @@ Game::Game() {
     std::cout << "Game has been initialized\n\n";
     // Create game entities.
     this->characters.push_back(new Player((Vector2){500.0f, 100.0f}, 0));
-    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0));
+    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 1000, 200));
+
+    // Add a moveable platform for player to jump onto!
+    Ground *epic_ground = new Ground((Vector2){400.0f, 200.0f}, 0, 200, 100);
+    epic_ground->SetMovable(true);
+    //epic_ground->SetOscillation(); // set the platform to go back and forth in movement
+    this->grounds.push_back((Entity *)epic_ground);
 }
 
 std::vector<Entity *> Game::GetGrounds() {
