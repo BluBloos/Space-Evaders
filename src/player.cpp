@@ -57,24 +57,25 @@ void Player::update(Game *game){
     // Gravity function of the player
     if (IsKeyDown(KEY_G)) {
         // Activate the black hole and move all platforms to the player.
-        td::vector<Entity *> grounds = game->GetGrounds();
+        std::vector<Entity *> grounds = game->GetGrounds();
         for (unsigned int i = 0; i < grounds.size(); i++) { 
             Ground *ground = (Ground *)grounds[i];
             if (ground->IsMovable()) {
 
-                Vector2 new_ground_pos = ground->GetPos();
+                Vector2 groundForce = ground->GetPos();
 
                 // Generate vector from ground to player (this is the vector to apply gravity in).
                 Vector2 gravityDirection;
-                gravityDirection.x = this->pos.x - new_ground_pos.x;
-                gravityDirection.y = this->pos.y - new_ground_pos.y;
+                gravityDirection.x = this->pos.x - groundForce.x;
+                gravityDirection.y = this->pos.y - groundForce.y;
 
                 // Normalize the gravity direction vector.
-                
+                gravityDirection = Vector2Normalize(gravityDirection);
 
-                
+                groundForce.x += gravityDirection.x * Entity::gravity * deltaTime;
+                groundForce.y += gravityDirection.y * Entity::gravity * deltaTime;                
                  
-                ground->SetPos((Vector2){})
+                ground->ApplyForce(groundForce, deltaTime);
             }
         }
     }
