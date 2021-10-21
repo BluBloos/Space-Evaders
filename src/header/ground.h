@@ -18,6 +18,7 @@ class Ground : public RenderableEntity{
         void SetMovable(bool isMovable) {this->movable = isMovable;};
         bool IsMovable() {return this->movable;};
         void ApplyForce(Vector2, float); // applies a force to the ground entity with the given delta time.
+        constexpr static const float airFriction = 10.0f; // friction formula being used is airFriction * v, giving a force.
 
     private:
         bool movable = false;
@@ -27,7 +28,6 @@ class Ground : public RenderableEntity{
         int width;
         int height;
         float mass = 1; // defaults to 1 kg.
-        constexpr static const float airFriction = 200.0f; // friction formula being used is airFriction * v^2, giving a force.
 };
 
 #endif

@@ -10,12 +10,16 @@ class Player : public RenderableEntity{
         Player(Vector2, int);
         void update(Game *) override;
         float GetCurrentVerticalSpeed();
+        constexpr static const float blackHoleCoeff = 20.0f;
+        
     private:
         // attr
         float currentVerticalSpeed;
         const float horSpeed = 600.0f;
         const float verSpeed = 310.0f;
         bool inAir;
+        
+        
         
         // The run function for the player updates the horizontal movement of the player based on frame deltaTime
         // and the direction of running.

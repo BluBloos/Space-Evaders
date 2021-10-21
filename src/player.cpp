@@ -72,7 +72,7 @@ void Player::update(Game *game){
                 // Normalize the gravity direction vector.
                 gravityDirection = Vector2Normalize(gravityDirection);
 
-                Vector2 gravityForce = Vector2Scale(gravityDirection, Entity::gravity);
+                Vector2 gravityForce = Vector2Scale(gravityDirection, Entity::gravity * 10.0f);
                  
                 ground->ApplyForce(gravityForce, deltaTime);
             }

@@ -36,12 +36,14 @@ void Ground::update(Game *game){
     // Apply large amounts of air friction for "locking"
     {
         float currentVelLen = Vector2Length(this->currentVelocity);
-        float accelFactor = (1.0f / this->mass) * currentVelLen * currentVelLen;
-        Vector2 accelVec = Vector2Scale( Vector2Negate(this->currentVelocity) , (accelFactor / currentVelLen * deltaTime) ); 
-        this->currentVelocity = Vector2Add(this->currentVelocity, accelVec);
-        if ( Vector2Length(this->currentVelocity) < powf(10, -10) ) {
-            this->currentVelocity = Vector2Zero(); // snap the velocity to zero once we get below some super small threshold.
-        } 
+        if (currentVelLen != 0) {
+            float accelFactor = (Ground::airFriction / this->mass) * currentVelLen;
+            Vector2 accelVec = Vector2Scale( Vector2Negate(this->currentVelocity) , (accelFactor / currentVelLen * deltaTime) ); 
+            this->currentVelocity = Vector2Add(this->currentVelocity, accelVec);
+            if ( Vector2Length(this->currentVelocity) < powf(10, -10) ) {
+                this->currentVelocity = Vector2Zero(); // snap the velocity to zero once we get below some super small threshold.
+            } 
+        }
     }
 
     // Move according to velocity
