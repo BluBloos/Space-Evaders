@@ -7,6 +7,7 @@
 Player::Player(Vector2 v, int layer) : RenderableEntity(v, layer){
     this->currentVerticalSpeed = 0.0;
     this->inAir = true;
+    this->flipMultiplier = 1;
 }
 
 void Player::update(Game *game){
@@ -23,6 +24,11 @@ void Player::update(Game *game){
     if (IsKeyDown(KEY_SPACE) && !this->inAir) {
         this->inAir = true;
         this->jump();
+    }
+
+    // Code for the gravity flip routine.
+    if (IsKeyDown(KEY_F) && !this->inAir) {
+        this->gravityFlip();
     }
 
     // Player collision code
@@ -49,11 +55,12 @@ void Player::update(Game *game){
             // TODO: Change 850 from a constant to something that is dependent on a variable screen size.
             this->pos.x = 850;
         }
+        // TODO: Check if player is touching top or bottom of the screen, in which case, send them back to spawn (?).
     }
 
-    // Update the vertical movement of the player.
+    // Update the vertical movement of the player, note the flip multiplier.
     if (this->inAir) {
-        this->pos.y += this->currentVerticalSpeed * deltaTime;
+        this->pos.y += this->currentVerticalSpeed * deltaTime * flipMultiplier;
         this->currentVerticalSpeed += this->currentVerticalSpeed < 0 ? Entity::gravity * deltaTime : Entity::gravity * deltaTime * 1.5f;
     }
 
@@ -71,4 +78,8 @@ void Player::jump(){
 
 float Player::GetCurrentVerticalSpeed(){
     return this->currentVerticalSpeed;
+}
+
+void Player::gravityFlip() {
+    this->flipMultiplier = this->flipMultiplier * -1; // flip the multiplier
 }
