@@ -34,18 +34,18 @@ void Ground::update(Game *game){
     float deltaTime = game->GetLastFrameTime();
 
     // Apply large amounts of air friction for "locking"
-    /*{
+    {
         float currentVelLen = Vector2Length(this->currentVelocity);
-        float accelFactor = -(Ground::airFriction / this->mass) * currentVelLen * currentVelLen;
+        float accelFactor = (1.0f / this->mass) * currentVelLen * currentVelLen;
         Vector2 accelVec = Vector2Scale( Vector2Negate(this->currentVelocity) , (accelFactor / currentVelLen * deltaTime) ); 
         this->currentVelocity = Vector2Add(this->currentVelocity, accelVec);
         if ( Vector2Length(this->currentVelocity) < powf(10, -10) ) {
             this->currentVelocity = Vector2Zero(); // snap the velocity to zero once we get below some super small threshold.
         } 
-    }*/
+    }
 
     // Move according to velocity
-    this->pos = Vector2Add(this->pos, this->currentVelocity); 
+    this->pos = Vector2Add(this->pos, Vector2Scale(this->currentVelocity, deltaTime) ); 
 
     // TODO: Add proper sizing to the ground. Becomes important once the player can move off the screen.
     DrawRectangleRec(Rectangle{this->pos.x, this->pos.y, (float)this->width, (float)this->height}, RED);

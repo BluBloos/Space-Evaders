@@ -62,20 +62,19 @@ void Player::update(Game *game){
             Ground *ground = (Ground *)grounds[i];
             if (ground->IsMovable()) {
 
-                Vector2 groundForce = ground->GetPos();
+                Vector2 groundPos = ground->GetPos();
 
                 // Generate vector from ground to player (this is the vector to apply gravity in).
                 Vector2 gravityDirection;
-                gravityDirection.x = this->pos.x - groundForce.x;
-                gravityDirection.y = this->pos.y - groundForce.y;
+                gravityDirection.x = this->pos.x - groundPos.x;
+                gravityDirection.y = this->pos.y - groundPos.y;
 
                 // Normalize the gravity direction vector.
                 gravityDirection = Vector2Normalize(gravityDirection);
 
-                groundForce.x += gravityDirection.x * Entity::gravity * deltaTime;
-                groundForce.y += gravityDirection.y * Entity::gravity * deltaTime;                
+                Vector2 gravityForce = Vector2Scale(gravityDirection, Entity::gravity);
                  
-                ground->ApplyForce(groundForce, deltaTime);
+                ground->ApplyForce(gravityForce, deltaTime);
             }
         }
     }
