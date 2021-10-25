@@ -1,13 +1,19 @@
 #include "header/player.h"
 #include "header/game.h"
 #include "header/ground.h"
+
+#include "animator.cpp"
 #include <iostream>
 
 
 Player::Player(Vector2 v, int layer) : RenderableEntity(v, layer){ 
+
     this->currentVerticalSpeed = 0.0;
     this->inAir = true;
     this->flipMultiplier = 1;
+
+    this->InitializeAnimations();
+    this->myAnimator = new Animator(this, &this->animations[0]);
 }
 
 void Player::update(Game *game){ 
@@ -40,7 +46,7 @@ void Player::update(Game *game){
                 // The player has collided with the ground. Stop movement.
                 this->inAir = false;
                 this->currentVerticalSpeed = 0.0f;
-                this->pos.y = ground->GetPos().y; // snap the y position of the player.
+                this->pos.y = ground->GetPos().y - this->animations[0].sprite.height; // snap the y position of the player.
                 break;
             }
         }
@@ -61,8 +67,7 @@ void Player::update(Game *game){
         this->currentVerticalSpeed += this->currentVerticalSpeed < 0 ? Entity::gravity * deltaTime : Entity::gravity * deltaTime * 1.5f;
     }
 
-    // Render the player using raylib DrawCircle function.
-    DrawCircle(this->pos.x, this->pos.y, 50.0f, BLACK);
+    this->myAnimator->PlayAnimation();
 }
 
 void Player::run(float delta, float direction){
@@ -78,6 +83,19 @@ float Player::GetCurrentVerticalSpeed(){
     return this->currentVerticalSpeed;
 }
 
+std::vector<Animation> Player::GetAnimations(){
+    return this->animations;
+}
+
 void Player::gravityFlip() {
     this->flipMultiplier = this->flipMultiplier * -1; // flip the multiplier
+}
+
+void Player::InitializeAnimations(){
+
+    
+
+    Texture2D temp = LoadTexture("../arts/UI_Tip.png");
+    Animation animTemp = {temp, Rectangle{0.0f, 0.0f, (float)temp.width/24, (float)temp.height}, 0, 48, 24};
+    this->animations.push_back(animTemp);
 }

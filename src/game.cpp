@@ -4,14 +4,15 @@
 #include "entity.cpp"
 #include "ground.cpp"
 #include "header/game.h"
+#include <iostream>
 
 
 // Define the things that happen when the game is initialized.
 Game::Game() {
     std::cout << "Game has been initialized\n\n";
     // Create game entities.
-    this->characters.push_back(new Player((Vector2){500.0f, 100.0f}, 0));
-    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0));
+    this->characters.push_back(new Player((Vector2){500.0f, 0.0f}, 0));
+    this->grounds.push_back(new Ground((Vector2){-20.0f, 200.0f}, 0));
 }
 
 std::vector<Entity *> Game::GetGrounds() {

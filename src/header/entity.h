@@ -2,12 +2,15 @@
 #define ENTITY_H
 
 #include "raylib_wrapped.h"
+#include "animation.h"
+#include <vector>
+
 class Game;
 
 class Entity {
     public:
         Entity();
-
+        virtual ~Entity();
         // Build entity with position and collision layer 
         Entity(Vector2, int);
 
@@ -29,8 +32,12 @@ class RenderableEntity : public Entity {
     public:
         RenderableEntity();
         RenderableEntity(Vector2, int);
+        virtual ~RenderableEntity();
     
     public:
         virtual void update(Game *);
+
+    protected:
+        std::vector<Animation> animations;
 };
 #endif

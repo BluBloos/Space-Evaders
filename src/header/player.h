@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include "entity.h"
+#include "animator.h"
 #include <vector>
  
 class Player : public RenderableEntity{
@@ -10,6 +11,7 @@ class Player : public RenderableEntity{
         Player(Vector2, int);
         void update(Game *) override;
         float GetCurrentVerticalSpeed();
+        std::vector<Animation> GetAnimations();
     private:
         // attr
         float currentVerticalSpeed;
@@ -17,6 +19,7 @@ class Player : public RenderableEntity{
         const float verSpeed = 310.0f;
         bool inAir;
         int flipMultiplier;
+        Animator* myAnimator;
         
         // The run function for the player updates the horizontal movement of the player based on frame deltaTime
         // and the direction of running.
@@ -27,6 +30,10 @@ class Player : public RenderableEntity{
 
         // gravity flip function, triggered by pressing f
         void gravityFlip();
+
+        // Initialize All Animations and put into animations.
+        void InitializeAnimations();
+
 };
 
 #endif
