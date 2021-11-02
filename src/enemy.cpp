@@ -1,7 +1,11 @@
 #include "header/enemy.h"
 
-Enemy::Enemy(Vector2 v, int layer) : RenderableEntity(v, layer){
+Enemy::Enemy(Vector2 v, int layer, float hor, float vert, int dirx, int diry) : RenderableEntity(v, layer){
     this->collisionLayer = layer;
+    this->horSpeed = hor;
+    this->verSpeed = vert;
+    this->dirx = dirx;
+    this->diry = diry; 
 }
 
 void Enemy::update(Game *game){
