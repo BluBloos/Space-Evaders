@@ -15,11 +15,13 @@ class Game {
         void GameUpdateAndRender();
 
         std::vector<Entity *> GetGrounds(); // Will return all the ground entities
+        std::vector<Entity *> GetEnemies(); // Will return all the ground entities
         float GetLastFrameTime();
 
     private:
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
+        std::vector<Entity *> enemies;
 };
 
 #endif

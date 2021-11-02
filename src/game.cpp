@@ -3,6 +3,7 @@
 #include "player.cpp"
 #include "entity.cpp"
 #include "ground.cpp"
+#include "enemy.cpp"
 #include "header/game.h"
 
 
@@ -11,11 +12,16 @@ Game::Game() {
     std::cout << "Game has been initialized\n\n";
     // Create game entities.
     this->characters.push_back(new Player((Vector2){500.0f, 100.0f}, 0));
+    this->enemies.push_back(new Enemy((Vector2){700.0f, 200.0f}, 0));
     this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0));
 }
 
 std::vector<Entity *> Game::GetGrounds() {
     return this->grounds;
+}
+
+std::vector<Entity *> Game::GetEnemies() {
+    return this->enemies;
 }
 
 float Game::GetLastFrameTime() {
@@ -40,6 +46,11 @@ void Game::GameUpdateAndRender() {
         entity->update(this);
     }
 
+    for (unsigned int i = 0; i < this->enemies.size(); i++) {
+            Entity *entity = this->enemies[i];
+            entity->update(this);
+    }
+
     EndDrawing();
 }
 
@@ -53,6 +64,10 @@ Game::~Game() {
     }
     for (unsigned int i = 0; i < this->grounds.size(); i++) {
         Entity *entity = this->grounds[i];
+        delete entity;
+    }
+    for (unsigned int i = 0; i < this->enemies.size(); i++) {
+        Entity *entity = this->enemies[i];
         delete entity;
     }
 
