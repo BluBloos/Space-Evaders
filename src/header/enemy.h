@@ -11,6 +11,11 @@ class Enemy : public RenderableEntity{
         void update(Game *) override;
         // Returns true if the player has touched enemy, otherwise will returns false.
         bool EnemyCollide(Entity*);
+
+    private:
+        float dirx;
+        float diry;
+        Vector2 cycleVelocity; // Speed at which the enemy moves in the x or y direction
 };
 
 #endif

@@ -2,8 +2,7 @@
 
 Enemy::Enemy(Vector2 v, int layer, float hor, float vert, int dirx, int diry) : RenderableEntity(v, layer){
     this->collisionLayer = layer;
-    this->horSpeed = hor;
-    this->verSpeed = vert;
+    this->cycleVelocity = (Vector2){hor, vert};
     this->dirx = dirx;
     this->diry = diry; 
 }
