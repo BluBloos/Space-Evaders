@@ -13,7 +13,12 @@ Game::Game() {
     // Create game entities.
     this->characters.push_back(new Player((Vector2){500.0f, 100.0f}, 0));
     this->enemies.push_back(new Enemy((Vector2){700.0f, 200.0f}, 0));
-    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0));
+    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 1000, 200));
+    // Add a moveable platform for player to jump onto!
+    Ground *epic_ground = new Ground((Vector2){400.0f, 200.0f}, 0, 200, 100);
+    epic_ground->SetMovable(true, 0, -1, 100, 100);
+    //epic_ground->SetOscillation(); // set the platform to go back and forth in movement
+    this->grounds.push_back((Entity *)epic_ground);
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -37,10 +42,6 @@ void Game::GameUpdateAndRender() {
     float deltaTime = GetFrameTime();
 
     // Go through loop of all entities and call update.
-    for (unsigned int i = 0; i < this->characters.size(); i++) {
-        Entity *entity = this->characters[i];
-        entity->update(this);
-    }
     for (unsigned int i = 0; i < this->grounds.size(); i++) {
         Entity *entity = this->grounds[i];
         entity->update(this);
@@ -51,6 +52,10 @@ void Game::GameUpdateAndRender() {
             entity->update(this);
     }
 
+    for (unsigned int i = 0; i < this->characters.size(); i++) {
+        Entity *entity = this->characters[i];
+        entity->update(this);
+    }
     EndDrawing();
 }
 
@@ -58,17 +63,13 @@ void Game::GameUpdateAndRender() {
 Game::~Game() {
 
     // Clean up entities.
+	for (unsigned int i = 0; i < this->grounds.size(); i++) {
+	        Entity *entity = this->grounds[i];
+	        delete entity;
+	}
     for (unsigned int i = 0; i < this->characters.size(); i++) {
         Entity *entity = this->characters[i];
         delete entity; // NOTE(Noah): Pretty sure this works...
-    }
-    for (unsigned int i = 0; i < this->grounds.size(); i++) {
-        Entity *entity = this->grounds[i];
-        delete entity;
-    }
-    for (unsigned int i = 0; i < this->enemies.size(); i++) {
-        Entity *entity = this->enemies[i];
-        delete entity;
     }
 
     std::cout << "Game has been closed\n";
