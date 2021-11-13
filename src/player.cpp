@@ -5,15 +5,18 @@
 #include "animator.cpp"
 #include <iostream>
 
-
 Player::Player(Vector2 v, int layer) : RenderableEntity(v, layer){ 
 
     this->currentVerticalSpeed = 0.0;
     this->inAir = true;
     this->flipMultiplier = 1;
 
-    this->InitializeAnimations();
-    this->myAnimator = new Animator(this, &this->animations[0]);
+    // Initialize Animator
+    this->InitializeAnimations();                                                                     // Animator Example
+    // Tell the animator what is the first animation to play when the game started.
+    this->myAnimator = new Animator(this, &(this->animations.at(PLAYER_ANIMATIONSTART_NAME)));        // Animator Example
+    this->SetConditions();  // Must be called after animator has been initialized!                    // Animator Example
+    this->SetTransitions();                                                                           // Animator Example
 }
 
 void Player::update(Game *game){ 
@@ -22,8 +25,17 @@ void Player::update(Game *game){
 
     // Handle the horizontal movement of player
     float dir = 0.0f;
-    if (IsKeyDown(KEY_A)) {dir = -1.0f;}
-    if (IsKeyDown(KEY_D)) {dir = 1.0f;}
+    if (IsKeyDown(KEY_A)) {
+        dir = -1.0f;
+        this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, true);   // Animator Example
+    }
+    else if (IsKeyDown(KEY_D)) {
+        dir = 1.0f;
+        this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, true);   // Animator Example
+    }
+    else {
+        this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, false);  // Animator Example
+    }
     this->run(deltaTime, dir); 
 
     // Code for the jumping routine.
@@ -46,7 +58,8 @@ void Player::update(Game *game){
                 // The player has collided with the ground. Stop movement.
                 this->inAir = false;
                 this->currentVerticalSpeed = 0.0f;
-                this->pos.y = ground->GetPos().y - this->animations[0].sprite.height; // snap the y position of the player.
+                this->pos.y = ground->GetPos().y - this->animations.at(PLAYER_ANIMATIONSTART_NAME).sprite.height; // snap the y position of the player.
+
                 break;
             }
         }
@@ -83,19 +96,50 @@ float Player::GetCurrentVerticalSpeed(){
     return this->currentVerticalSpeed;
 }
 
-std::vector<Animation> Player::GetAnimations(){
-    return this->animations;
-}
-
 void Player::gravityFlip() {
     this->flipMultiplier = this->flipMultiplier * -1; // flip the multiplier
 }
 
+#pragma region Initialize Animator Components
 void Player::InitializeAnimations(){
+    // Stand
+    Texture2D temp = LoadTexture(PLAYER_ANIMATIONSTART_PATH);
+    Animation animTemp = {temp,     // Animation Frames
+                          Rectangle{0.0f, 0.0f, (float)temp.width/24, (float)temp.height}, // Size of one frame 
+                          0,        // Which frame is the first frame of the animation
+                          0,        // Which frame starts to play at the first round. Usually same as the last one.
+                          48,       // The number of frames that one frame of the sprite can stay. So-called frame speed.
+                          24        // The total number of frames that the sprite has.
+                          };      
+    this->animations.insert({PLAYER_ANIMATIONSTART_NAME, animTemp});
 
-    
-
-    Texture2D temp = LoadTexture("../arts/UI_Tip.png");
-    Animation animTemp = {temp, Rectangle{0.0f, 0.0f, (float)temp.width/24, (float)temp.height}, 0, 48, 24};
-    this->animations.push_back(animTemp);
+    // Walk
+    temp = LoadTexture(PLAYER_ANIMATION_WALK_PATH);
+    this->animations.insert({PLAYER_ANIMATION_WALK_NAME, {temp, Rectangle{0.0f, 0.0f, (float)temp.width/28, (float)temp.height},0, 0, 120, 28}});
 }
+
+void Player::SetTransitions(){
+    Animator::SetTransition(
+        &this->animations[PLAYER_ANIMATIONSTART_NAME],    // From this animation
+        &this->animations[PLAYER_ANIMATION_WALK_NAME],    // To this animation
+        std::vector<TargetCondition>{                     // under these conditions
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, true)
+        }
+    );
+    Animator::SetTransition( 
+        &this->animations[PLAYER_ANIMATION_WALK_NAME],  
+        &this->animations[PLAYER_ANIMATIONSTART_NAME],     
+        std::vector<TargetCondition>{                     
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, false)
+        }
+    );
+}
+
+// The player has these flags to control the animation flow
+// Initialize flags
+void Player::SetConditions(){
+    this->myAnimator->SetIntCondition(PLAYER_ANIMATIONCONDITION_INT_NAME_ONE);
+    this->myAnimator->SetBoolCondition(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE);
+    this->myAnimator->SetTriggerCondition(PLAYER_ANIMATIONCONDITION_TRIGGER_NAME_ONE);
+}
+#pragma endregion

@@ -3,37 +3,34 @@
 
 #include "entity.h"
 #include "animator.h"
-#include <vector>
- 
+
 class Player : public RenderableEntity{
     public:
         // player constructor takes in the player position and render layer.
         Player(Vector2, int);
+
         void update(Game *) override;
         float GetCurrentVerticalSpeed();
-        std::vector<Animation> GetAnimations();
+
     private:
         // attr
         float currentVerticalSpeed;
-        const float horSpeed = 600.0f;
+        const float horSpeed = 280.0f;
         const float verSpeed = 310.0f;
         bool inAir;
         int flipMultiplier;
-        Animator* myAnimator;
         
         // The run function for the player updates the horizontal movement of the player based on frame deltaTime
         // and the direction of running.
         void run(float, float);
-
         // Calling the run function will make initiate a player jump sequence.
         void jump();
-
         // gravity flip function, triggered by pressing f
         void gravityFlip();
-
-        // Initialize All Animations and put into animations.
-        void InitializeAnimations();
-
+        
+        void InitializeAnimations() override;
+        void SetTransitions() override;
+        void SetConditions() override;
 };
 
 #endif

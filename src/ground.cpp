@@ -15,6 +15,6 @@ bool Ground::TouchGround(Entity *target, float deltaTime){
     return (this->collisionLayer  == player->GetLayer()) &&
             this->pos.x           <= player->GetPos().x &&
             this->pos.x + 1000.0f >= player->GetPos().x &&
-            this->pos.y           >= player->GetPos().y + player->GetAnimations()[0].sprite.height &&
-            this->pos.y            < player->GetPos().y + player->GetCurrentVerticalSpeed() * deltaTime + player->GetAnimations()[0].sprite.height;
+            this->pos.y           >= player->GetPos().y + player->GetAnimations()->at(PLAYER_ANIMATIONSTART_NAME).sprite.height &&
+            this->pos.y            < player->GetPos().y + player->GetCurrentVerticalSpeed() * deltaTime + player->GetAnimations()->at(PLAYER_ANIMATIONSTART_NAME).sprite.height;
 }

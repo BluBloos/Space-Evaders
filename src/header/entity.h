@@ -2,8 +2,9 @@
 #define ENTITY_H
 
 #include "raylib_wrapped.h"
-#include "animation.h"
-#include <vector>
+#include "animator.h"
+#include "resource.h"
+#include <unordered_map>
 
 class Game;
 
@@ -34,10 +35,19 @@ class RenderableEntity : public Entity {
         RenderableEntity(Vector2, int);
         virtual ~RenderableEntity();
     
-    public:
         virtual void update(Game *);
+        
+    public:
+        std::unordered_map<std::string, Animation>* GetAnimations();
 
     protected:
-        std::vector<Animation> animations;
+        Animator* myAnimator;
+        std::unordered_map<std::string, Animation> animations;
+        // Initialize All Animations and put into animations.
+        virtual void InitializeAnimations();
+        // Initialize all transitions between animations
+        virtual void SetTransitions();
+        // Initialize all conditions
+        virtual void SetConditions();
 };
 #endif
