@@ -1,6 +1,7 @@
 #include "header/enemy.h"
+#include "character.cpp"
 
-Enemy::Enemy() : RenderableEntity(){
+Enemy::Enemy() : Character () {
     this->collisionLayer = 0;
     this->oscillationX = 0;
     this->oscillationY = 0;
@@ -13,7 +14,7 @@ Enemy::Enemy() : RenderableEntity(){
     this->mass = 1;
 }
 
-Enemy::Enemy(Vector2 v, int layer) : RenderableEntity(v, layer) {
+Enemy::Enemy(Vector2 v, int layer) : Character (v, layer) {
     this->collisionLayer = layer;
 }
 

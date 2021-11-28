@@ -15,7 +15,7 @@ Game::Game() {
     Enemy *evil_enemy = new Enemy((Vector2){700.0f, 200.0f}, 0);
     evil_enemy->SetMovable(true, 0, -1, 100, 100);
     this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 1000, 200));
-    this->enemies.push_back((Entity *)evil_enemy);
+    this->characters.push_back((Entity *)evil_enemy);
     // Add a moveable platform for player to jump onto!
     Ground *epic_ground = new Ground((Vector2){400.0f, 200.0f}, 0, 200, 100);
     epic_ground->SetMovable(true, -1, 0, 100, 100);
@@ -27,8 +27,8 @@ std::vector<Entity *> Game::GetGrounds() {
     return this->grounds;
 }
 
-std::vector<Entity *> Game::GetEnemies() {
-    return this->enemies;
+std::vector<Entity *> Game::GetCharacters() {
+    return this->characters;
 }
 
 float Game::GetLastFrameTime() {
@@ -49,11 +49,6 @@ void Game::GameUpdateAndRender() {
         entity->update(this);
     }
 
-    for (unsigned int i = 0; i < this->enemies.size(); i++) {
-            Entity *entity = this->enemies[i];
-            entity->update(this);
-    }
-
     for (unsigned int i = 0; i < this->characters.size(); i++) {
         Entity *entity = this->characters[i];
         entity->update(this);
@@ -69,11 +64,6 @@ Game::~Game() {
 	        Entity *entity = this->grounds[i];
 	        delete entity;
 	}
-
-    for (unsigned int i = 0; i < this->enemies.size(); i++) {
-            Entity *entity = this->enemies[i];
-	        delete entity;
-    }
 
     for (unsigned int i = 0; i < this->characters.size(); i++) {
         Entity *entity = this->characters[i];

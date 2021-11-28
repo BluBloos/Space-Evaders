@@ -1,10 +1,10 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
-#include "entity.h"
+#include "character.h"
 #include <vector>
  
-class Player : public RenderableEntity{
+class Player : public Character{
     public:
         // player constructor takes in the player position and render layer.
         Player(Vector2, int);

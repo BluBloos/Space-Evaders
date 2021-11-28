@@ -1,10 +1,10 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
-#include "entity.h"
+#include "character.h"
 #include <vector>
 
-class Enemy : public RenderableEntity{
+class Enemy : public Character {
     public:
         // Constructor
         Enemy();
@@ -29,7 +29,7 @@ class Enemy : public RenderableEntity{
         float diry;
         float oscillationX; // speed at which to oscillate in the X direction
         float oscillationY; // speed at which to oscillate in the Y direction
-        Vector2 currentVelocity = (Vector2){0.0f, 0.0f}; // velocity of platform (not including horiztonal or vertical oscillations)
+        Vector2 currentVelocity = (Vector2){0.0f, 0.0f}; // velocity of enemy (not including horiztonal or vertical oscillations)
         int width;
         int height;
         float mass = 1; // defaults to 1 kg.
