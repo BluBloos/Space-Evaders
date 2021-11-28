@@ -16,8 +16,16 @@ void Player::update(Game *game){
 
     // Handle the horizontal movement of player
     float dir = 0.0f;
-    if (IsKeyDown(KEY_A)) {dir = -1.0f;}
-    if (IsKeyDown(KEY_D)) {dir = 1.0f;}
+    if (game->getControlFlag()) {
+        if (IsKeyDown(KEY_A)) {dir = -1.0f;}
+        if (IsKeyDown(KEY_D)) {dir = 1.0f;}
+    }
+
+    else {
+        if (IsKeyDown(KEY_LEFT)) {dir = -1.0f;}
+        if (IsKeyDown(KEY_RIGHT)) {dir = 1.0f;}
+    }
+
     this->run(deltaTime, dir);
 
     // Code for the jumping routine.
