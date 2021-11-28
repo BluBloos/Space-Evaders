@@ -17,6 +17,9 @@ Game::Game() {
     epic_ground->SetMovable(true, 0, -1, 100, 100);
     //epic_ground->SetOscillation(); // set the platform to go back and forth in movement
     this->grounds.push_back((Entity *)epic_ground);
+
+    // this->titleSprite = LoadTexture("./resources/evaderSprite.png");
+    onTitle = true;
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -32,18 +35,31 @@ void Game::GameUpdateAndRender() {
     BeginDrawing(); 
     ClearBackground(RAYWHITE);
 
-    // Calling raylib function GetFrameTime to return the time in seconds for the last frame drawn.
-    float deltaTime = GetFrameTime();
+    if (onTitle){ // still on title screen
+        showTitle();
+        if (IsKeyPressed(KEY_ENTER)){ // if enter is pressed, start game
+            onTitle = false;
+            UnloadTexture(this->titleSprite); // unload sprite
+        }
+    }
 
-    // Go through loop of all entities and call update.
-    for (unsigned int i = 0; i < this->grounds.size(); i++) {
-        Entity *entity = this->grounds[i];
-        entity->update(this);
+    else { // no longer on title screen
+
+        // Calling raylib function GetFrameTime to return the time in seconds for the last frame drawn.
+        float deltaTime = GetFrameTime();
+
+        // Go through loop of all entities and call update.
+        for (unsigned int i = 0; i < this->grounds.size(); i++) {
+            Entity *entity = this->grounds[i];
+            entity->update(this);
+        }
+        for (unsigned int i = 0; i < this->characters.size(); i++) {
+            Entity *entity = this->characters[i];
+            entity->update(this);
+        }
     }
-    for (unsigned int i = 0; i < this->characters.size(); i++) {
-        Entity *entity = this->characters[i];
-        entity->update(this);
-    }
+
+
     EndDrawing();
 }
 
@@ -62,4 +78,11 @@ Game::~Game() {
 
 
     std::cout << "Game has been closed\n";
+}
+
+void Game::showTitle() {
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
+    DrawText("Space Evaders", GetScreenWidth()*0.1, GetScreenHeight()*0.3, 95, RAYWHITE);
+    DrawText("Press Enter to Start", GetScreenWidth()*0.2, GetScreenHeight()*0.8, 50, RAYWHITE);
+    // DrawTexture(this->titleSprite, GetScreenWidth()*0.25, GetScreenHeight()*0.7, RAYWHITE);
 }

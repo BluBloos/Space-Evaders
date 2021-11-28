@@ -17,6 +17,11 @@ class Game {
         std::vector<Entity *> GetGrounds(); // Will return all the ground entities
         float GetLastFrameTime();
 
+        bool onTitle;
+        Texture2D titleSprite;
+        // void showTitle(Texture2D sprite);
+        void showTitle();
+
     private:
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
