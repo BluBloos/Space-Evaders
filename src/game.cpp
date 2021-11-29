@@ -3,7 +3,8 @@
 #include "player.cpp"
 #include "entity.cpp"
 #include "ground.cpp"
-#include "header/game.h"
+#include "game.h"
+#include "resource.h"
 #include <iostream>
 
 
@@ -12,7 +13,7 @@ Game::Game() {
     std::cout << "Game has been initialized\n\n";
     // Create game entities.
     this->characters.push_back(new Player((Vector2){500.0f, 100.0f}, 0));
-    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 1000, 200));
+    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 4000, 200)); // NOTE: We made this big to test camera movement :)
     // Add a moveable platform for player to jump onto!
     Ground *epic_ground = new Ground((Vector2){400.0f, 200.0f}, 0, 200, 100);
     epic_ground->SetMovable(true, 0, -1, 100, 100);
@@ -23,6 +24,12 @@ Game::Game() {
     this->onTitle = true;
     this->controlFlag = true; // control flag to swap between WASD and arrow keys
     this->settingsFlag = false; // settings flag to display settings
+
+    this->camera = { 0 };
+    this->camera.target = this->characters[0]->GetPos();
+    camera.offset = (Vector2){ SCREENWIDTH/2.0f, SCREENHEIGHT/2.0f };
+    camera.rotation = 0.0f;
+    camera.zoom = 1.0f;
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -60,6 +67,11 @@ void Game::GameUpdateAndRender() {
         }
 
         else {
+
+            this->updateCameraSmoothFollowInsideMap(deltaTime);
+            BeginMode2D(this->camera);
+
+
             // Go through loop of all entities and call update.
             for (unsigned int i = 0; i < this->grounds.size(); i++) {
                 Entity *entity = this->grounds[i];
@@ -69,10 +81,46 @@ void Game::GameUpdateAndRender() {
                 Entity *entity = this->characters[i];
                 entity->update(this);
             }
+
+            EndMode2D();
         }
     }
 
     EndDrawing();
+}
+
+// TODO: We want to put an if statement over the entire thing. 
+// This way we can do the screen edge boundary thing.
+// So we keep the smooth follow stuff, but only if the player is on the edge of the screen.
+void Game::updateCameraSmoothFollowInsideMap(float delta){
+    float minSpeed = 50.0f;
+    float minEffectLength = 5.0f;
+    float fractionSpeed = 0.8f;
+
+    Vector2 playerPos = this->characters[0]->GetPos();
+    //this->camera.offset = (Vector2){ SCREENWIDTH/2.0f - OFFSETCORRECTVALUE, SCREENHEIGHT/2.0f };
+    Vector2 diff = Vector2Subtract(playerPos, this->camera.target);
+
+    float fringeLenX = 300.0f; // 50 pixels of the sides of screen.
+    float fringeLenY = 200.0f;
+    bool playerOnFringeX = abs(this->camera.target.x - playerPos.x) > SCREENWIDTH/2.0f - fringeLenX;
+    bool playerOnFringeY = abs(this->camera.target.y - playerPos.y) > SCREENHEIGHT/2.0f - fringeLenY;
+
+    // adjust the diff accordingly, to only move in specific dir.
+    if (playerOnFringeX && !playerOnFringeY) {
+        diff.y = 0; 
+    } else if (playerOnFringeY && !playerOnFringeX) {
+        diff.x = 0;
+    } else if (!playerOnFringeY && !playerOnFringeX) {
+        diff.x = 0; diff.y = 0;
+    }
+
+    float length = Vector2Length(diff);
+
+    if (length > minEffectLength) {
+        float speed = fmaxf(fractionSpeed*length, minSpeed);
+        this->camera.target = Vector2Add(this->camera.target, Vector2Scale(diff, speed*delta/length));
+    }
 }
 
 // Define the things that will happen when the game is closed.

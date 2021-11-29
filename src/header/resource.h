@@ -5,6 +5,11 @@
  * Highly Recommand to define constants for each file resource and names of files and certain variables
  */
 
+// Screen Size (Camera Size)
+#define SCREENWIDTH 850
+#define SCREENHEIGHT 600
+// Because origin of the image is at upper-left corner, the offset value of cameras should be corrected.
+#define OFFSETCORRECTVALUE 100.0f
 // Animation file path and animation name
 #define PLAYER_ANIMATIONSTART_PATH "arts/stand.png"
 #define PLAYER_ANIMATIONSTART_NAME "Stand"

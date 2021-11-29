@@ -77,9 +77,9 @@ void Player::update(Game *game){
         if (this->pos.x < 0) {
             this->pos.x = 0; // Snap the player.
         }
-        if (this->pos.x > 850) {
+        if (this->pos.x > 3950) {
             // TODO: Change 850 from a constant to something that is dependent on a variable screen size.
-            this->pos.x = 850;
+            this->pos.x = 3950;
         }
         // TODO: Check if player is touching top or bottom of the screen, in which case, send them back to spawn (?).
     }
