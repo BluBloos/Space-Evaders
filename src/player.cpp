@@ -27,10 +27,12 @@ void Player::update(Game *game){
     float dir = 0.0f;
     if (IsKeyDown(KEY_A)) {
         dir = -1.0f;
+        this->myAnimator->FlipAnimation(LEFT);
         this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, true);   // Animator Example
     }
     else if (IsKeyDown(KEY_D)) {
         dir = 1.0f;
+        this->myAnimator->FlipAnimation(RIGHT);
         this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, true);   // Animator Example
     }
     else {
@@ -106,6 +108,7 @@ void Player::InitializeAnimations(){
     Texture2D temp = LoadTexture(PLAYER_ANIMATIONSTART_PATH);
     Animation animTemp = {temp,     // Animation Frames
                           Rectangle{0.0f, 0.0f, (float)temp.width/24, (float)temp.height}, // Size of one frame 
+                          RIGHT,    // The direction that the image faces to
                           0,        // Which frame is the first frame of the animation
                           0,        // Which frame starts to play at the first round. Usually same as the last one.
                           48,       // The number of frames that one frame of the sprite can stay. So-called frame speed.
@@ -115,7 +118,7 @@ void Player::InitializeAnimations(){
 
     // Walk
     temp = LoadTexture(PLAYER_ANIMATION_WALK_PATH);
-    this->animations.insert({PLAYER_ANIMATION_WALK_NAME, {temp, Rectangle{0.0f, 0.0f, (float)temp.width/28, (float)temp.height},0, 0, 120, 28}});
+    this->animations.insert({PLAYER_ANIMATION_WALK_NAME, {temp, Rectangle{0.0f, 0.0f, (float)temp.width/28, (float)temp.height}, RIGHT, 0, 0, 120, 28}});
 }
 
 void Player::SetTransitions(){
@@ -138,8 +141,13 @@ void Player::SetTransitions(){
 // The player has these flags to control the animation flow
 // Initialize flags
 void Player::SetConditions(){
-    this->myAnimator->SetIntCondition(PLAYER_ANIMATIONCONDITION_INT_NAME_ONE);
-    this->myAnimator->SetBoolCondition(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE);
-    this->myAnimator->SetTriggerCondition(PLAYER_ANIMATIONCONDITION_TRIGGER_NAME_ONE);
+    if (this->myAnimator) {
+        this->myAnimator->SetIntCondition(PLAYER_ANIMATIONCONDITION_INT_NAME_ONE);
+        this->myAnimator->SetBoolCondition(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE);
+        this->myAnimator->SetTriggerCondition(PLAYER_ANIMATIONCONDITION_TRIGGER_NAME_ONE);
+    }
+    else {
+        TraceLog(LOG_ERROR, "Error: Animator has not been initialized!");
+    }
 }
 #pragma endregion

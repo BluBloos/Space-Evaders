@@ -9,14 +9,20 @@
 Animator::Animator(RenderableEntity* entity, Animation* entry){
     this->target = entity;
     this->currentAnimation = entry;
+    this->dire = entry->dire;
     this->frameCount = 0;
 }
 
 #pragma region Play Animation
-void Animator::PlayAnimation(){
+void Animator::FlipAnimation(DIRECTION d){
+    this->dire = d;
+}
+void Animator::PlayAnimation() {
     
     // Decide which animation to play at this frame
     this->checkTransition();
+    // Flip the image if current animation direction is not the same as default animation of animator
+    this->checkAnimationFlip();
 
     // One frame of the animation has stayed for one more unit time.
     this->frameCount++;
@@ -102,6 +108,16 @@ void Animator::checkTransition(){
         }
     }
 }
+void Animator::checkAnimationFlip(){
+    if (this->dire == this->currentAnimation->dire){
+        return;
+    }
+    Image tempImage = GetTextureData(this->currentAnimation->sprite);
+    ImageFlipHorizontal(&tempImage);
+    this->currentAnimation->sprite = LoadTextureFromImage(tempImage);
+    this->currentAnimation->dire = this->dire;
+    UnloadImage(tempImage);
+}
 void Animator::resetAnimationConfig(){
     this->frameCount = 0;
     this->currentAnimation->currentFrame = this->currentAnimation->startFrame;  // currentAnimation has not been changed by now
@@ -112,7 +128,7 @@ void Animator::resetTrigger(){
     for (std::string& s : this->openTrigger) {
         ((TriggerCondition*)(this->conditions.at(s)))->value = false;  // Reset value
     }
-    this->openTrigger.clear();  // clear cache
+    this->openTrigger.clear();  // clear trigger cache
 }
 #pragma endregion
 

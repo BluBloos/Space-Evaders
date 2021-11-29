@@ -7,6 +7,10 @@
 
 struct Animation;
 
+enum DIRECTION{
+    LEFT=0, RIGHT=1
+};
+
 // Conditions used to decide which animation to play
 enum FLAG{
     INTEGER=0, BOOLEAN=1, TRIGGER=2
@@ -42,6 +46,8 @@ struct Animation{
     Texture2D sprite;
     // To allocate which frame of the sprite is displayed
     Rectangle frameRec;
+    // The direction that the image faces to
+    DIRECTION dire;
 
     // Which Frame starts from
     int startFrame;

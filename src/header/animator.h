@@ -51,10 +51,13 @@ class TriggerCondition : public Condition {
 class Animator{
     
     public:
+        // parameters: Target Entity, Entry Animation (the first animation to play)
         Animator(RenderableEntity*, Animation*);
 
-        // main function, called by update()
+        // the function called by update() of entities, and should be placed at the end of update function
         void PlayAnimation();
+        // adjust the default direction of characters
+        void FlipAnimation(DIRECTION);
         // Used to set Flag values to control animation flow
         void SetInteger(const std::string&, int);
         void SetBool(const std::string&, bool);
@@ -79,11 +82,15 @@ class Animator{
         Animation* currentAnimation;
         // The number of frames (in time) has stayed.
         int frameCount;
+        DIRECTION dire;
         std::vector<std::string> openTrigger;
         std::unordered_map<std::string, Condition*> conditions;
+        
         // func
         // Go through all flags and check out what the next animation is.
         void checkTransition(); 
+        // Before drawing animations, check is it necessary to flip the animation
+        void checkAnimationFlip();
         // When the animation is changed, data on controling frame number have to be changed
         void resetAnimationConfig();
         // Reset trigger value automatically
