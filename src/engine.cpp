@@ -5,28 +5,28 @@
 
 int main(void)
 {
-    const int screenWidth = 885;
-    const int screenHeight = 500;
-    
-    // Make a new game object.
-    // // Thus calling the game initialization code.
-    Game *myGame = new Game();
-    
+    const int screenWidth = 800;
+    const int screenHeight = 400;
+
     InitWindow(screenWidth, screenHeight, "Space Evaders");
-    SetTargetFPS(60);
+
+    // Make a new game object.
+    Game *myGame = new Game(); // Note(Chong): The game must be initialized after InitWindow. Because OpenGL context is required for textures
     
+    SetTargetFPS(60);
+
     // Main engine loop
     // WindowShouldClose detects window close button or ESC key, things like this.
     while (!WindowShouldClose())
     {
         myGame->GameUpdateAndRender();
     }
-    
-    // Close window and OpenGL context
-    CloseWindow();
-
+        
     // Call the game de-init code. Done by deleting the game object.
     delete myGame;
+
+    // Close window and OpenGL context
+    CloseWindow();
     
     return 0;
 }
