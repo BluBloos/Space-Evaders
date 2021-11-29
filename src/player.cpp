@@ -62,13 +62,15 @@ void Player::update(Game *game){
         std::vector<Entity *> grounds = game->GetGrounds();
         for (unsigned int i = 0; i < grounds.size(); i++) { 
             Ground *ground = (Ground *)grounds[i];
-            if (ground->TouchGround(this, deltaTime)){
+            if (ground->TouchGround(this, deltaTime) && this->currentVerticalSpeed >= 0){
                 // The player has collided with the ground. Stop movement.
                 this->inAir = false;
                 this->currentVerticalSpeed = 0.0f;
                 //this->pos.y = ground->GetPos().y - this->animations.at(PLAYER_ANIMATIONSTART_NAME).sprite.height; // snap the y position of the player.
                 this->pos.y = ground->GetPos().y;
                 break;
+            } else {
+                this->inAir = true;
             }
         }
         // TODO: Check if the player is touching the sides of the screen.
@@ -141,21 +143,42 @@ void Player::gravityFlip() {
 
 #pragma region Initialize Animator Components
 void Player::InitializeAnimations(){
+    /* NOTE(Noah): 
+        Given that we are doing this type of hard coding for the initialization of animations
+        I am going to continue on this trend. We need to subsample into each animation rectangle because each sprite is 
+        a much smaller width than the actual rectangle.
+        And we will need to do this for both the standing and walking animations.
+    */ 
+   int STAND_PIXEL_WIDTH = 19;
+   int STAND_PIXEL_LEFT_OFFSET = 93;
+   int STAND_IMAGES = 24;
+   int WALK_PIXEL_WIDTH = 24;
+   int WALK_PIXEL_OFFSET = 95;
+    
     // Stand
     Texture2D temp = LoadTexture(PLAYER_ANIMATIONSTART_PATH);
     Animation animTemp = {temp,     // Animation Frames
-                          Rectangle{0.0f, 0.0f, (float)temp.width/24, (float)temp.height}, // Size of one frame 
+                          Rectangle{(float)STAND_PIXEL_LEFT_OFFSET, 0.0f, (float)STAND_PIXEL_WIDTH, (float)temp.height}, // Size of one frame 
                           RIGHT,    // The direction that the image faces to
                           0,        // Which frame is the first frame of the animation
                           0,        // Which frame starts to play at the first round. Usually same as the last one.
                           48,       // The number of frames that one frame of the sprite can stay. So-called frame speed.
-                          24        // The total number of frames that the sprite has.
+                          24,        // The total number of frames that the sprite has.
+                          temp.width/24, // stride to step frame rectangle by 
+                          STAND_PIXEL_LEFT_OFFSET
                           };      
     this->animations.insert({PLAYER_ANIMATIONSTART_NAME, animTemp});
 
     // Walk
     temp = LoadTexture(PLAYER_ANIMATION_WALK_PATH);
-    this->animations.insert({PLAYER_ANIMATION_WALK_NAME, {temp, Rectangle{0.0f, 0.0f, (float)temp.width/28, (float)temp.height}, RIGHT, 0, 0, 120, 28}});
+    this->animations.insert({PLAYER_ANIMATION_WALK_NAME, {temp, Rectangle{(float)WALK_PIXEL_OFFSET, 0.0f, (float)WALK_PIXEL_WIDTH, (float)temp.height}, 
+        RIGHT, 
+        0, // first frame
+        0, // first frame, first round
+        120, // frame wait time (defines rate animation plays)
+        28, // frames
+        temp.width/28,
+        WALK_PIXEL_OFFSET}});
 }
 
 void Player::SetTransitions(){

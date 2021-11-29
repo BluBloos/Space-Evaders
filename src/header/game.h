@@ -21,6 +21,11 @@ class Game {
         void setControlFlag();
         bool getControlFlag();
 
+        bool onTitle;
+        Texture2D titleSprite;
+        // void showTitle(Texture2D sprite);
+        void showTitle();
+
     private:
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;

@@ -57,6 +57,10 @@ struct Animation{
     int frameSpeed;
     // The number of frames that the sprite has.
     int frameNum;
+    // the pixel amount to step the frame rectangle by
+    int frameRecStride;
+    // the pixel offset from the left of the texture that the first sprite exists at.
+    int frameLeftOffset;
 
     // The group of animations to play 
     std::vector<Transition> transitions;

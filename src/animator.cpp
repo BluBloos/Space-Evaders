@@ -35,11 +35,18 @@ void Animator::PlayAnimation() {
 
         // Go back to the start of animation
         if (this->currentAnimation->currentFrame > (this->currentAnimation->frameNum - 1)) {
-            this->currentAnimation->currentFrame = this->currentAnimation->startFrame;
+            this->currentAnimation->currentFrame = this->currentAnimation->startFrame; // NOTE(Noah): I reckon that this will not work if startFrame != 0.
         }
 
         // Move Frame rectangle to the next
-        this->currentAnimation->frameRec.x = (float)this->currentAnimation->currentFrame*(float)this->currentAnimation->sprite.width/this->currentAnimation->frameNum;
+        int leftOffsetForReverseDir = this->currentAnimation->sprite.width - ( this->currentAnimation->frameLeftOffset + (this->currentAnimation->frameNum - 1) * this->currentAnimation->frameRecStride + this->currentAnimation->frameRec.width);
+        int offset = (float)this->currentAnimation->currentFrame * this->currentAnimation->frameRecStride;
+        if (this->dire == (DIRECTION)LEFT) {
+            this->currentAnimation->frameRec.x = leftOffsetForReverseDir + offset;
+        } else { // direction is RIGHT
+            this->currentAnimation->frameRec.x = this->currentAnimation->frameLeftOffset + offset;    
+        }
+
     }
 
     // Draw part of the texture
@@ -123,7 +130,7 @@ void Animator::resetAnimationConfig(){
     this->frameCount = 0;
     this->currentAnimation->currentFrame = this->currentAnimation->startFrame;  // currentAnimation has not been changed by now
     // TODO: rectangle should be more flexible.
-    this->currentAnimation->frameRec.x = 0;
+    this->currentAnimation->frameRec.x = this->currentAnimation->frameLeftOffset;
 }
 void Animator::resetTrigger(){
     for (std::string& s : this->openTrigger) {
