@@ -5,8 +5,12 @@
 #include "animator.cpp"
 #include <iostream>
 
+<<<<<<< HEAD
 Player::Player(Vector2 v, int layer) : RenderableEntity(v, layer){ 
 
+=======
+Player::Player(Vector2 v, int layer) : RenderableEntity(v, layer){
+>>>>>>> 9d2b4ef4a73eeed5e1dae301d270585ea7d7106c
     this->currentVerticalSpeed = 0.0;
     this->inAir = true;
     this->flipMultiplier = 1;
@@ -19,12 +23,13 @@ Player::Player(Vector2 v, int layer) : RenderableEntity(v, layer){
     this->SetTransitions();                                                                           // Animator Example
 }
 
-void Player::update(Game *game){ 
+void Player::update(Game *game){
 
     float deltaTime = game->GetLastFrameTime();
 
     // Handle the horizontal movement of player
     float dir = 0.0f;
+<<<<<<< HEAD
     if (IsKeyDown(KEY_A)) {
         dir = -1.0f;
         this->myAnimator->FlipAnimation(LEFT);
@@ -39,9 +44,15 @@ void Player::update(Game *game){
         this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, false);  // Animator Example
     }
     this->run(deltaTime, dir); 
+=======
+    if (IsKeyDown(KEY_A)) {dir = -1.0f;}
+    if (IsKeyDown(KEY_D)) {dir = 1.0f;}
+    this->run(deltaTime, dir);
+>>>>>>> 9d2b4ef4a73eeed5e1dae301d270585ea7d7106c
 
     // Code for the jumping routine.
     if (IsKeyDown(KEY_SPACE) && !this->inAir) {
+        this->inAir = true;
         this->jump();
     }
 
@@ -54,15 +65,17 @@ void Player::update(Game *game){
     {
         // Check if the player has hit any ground
         std::vector<Entity *> grounds = game->GetGrounds();
-        for (unsigned int i = 0; i < grounds.size(); i++) { 
+        for (unsigned int i = 0; i < grounds.size(); i++) {
             Ground *ground = (Ground *)grounds[i];
-            if (ground->TouchGround(this, deltaTime)){
+            if (ground->TouchGround(this, deltaTime) && this->currentVerticalSpeed >= 0){
                 // The player has collided with the ground. Stop movement.
-                this->inAir = false;
+            	this->inAir = false;
                 this->currentVerticalSpeed = 0.0f;
                 this->pos.y = ground->GetPos().y - this->animations.at(PLAYER_ANIMATIONSTART_NAME).sprite.height; // snap the y position of the player.
 
                 break;
+            } else {
+            	this->inAir = true;
             }
         }
         // TODO: Check if the player is touching the sides of the screen.
@@ -82,7 +95,37 @@ void Player::update(Game *game){
         this->currentVerticalSpeed += this->currentVerticalSpeed < 0 ? Entity::gravity * deltaTime : Entity::gravity * deltaTime * 1.5f;
     }
 
+<<<<<<< HEAD
     this->myAnimator->PlayAnimation();
+=======
+    // Gravity function of the player
+    if (IsKeyDown(KEY_G)) {
+        // Activate the black hole and move all platforms to the player.
+        std::vector<Entity *> grounds = game->GetGrounds();
+        for (unsigned int i = 0; i < grounds.size(); i++) { 
+            Ground *ground = (Ground *)grounds[i];
+            if (ground->IsMovable()) {
+
+                Vector2 groundPos = ground->GetPos();
+
+                // Generate vector from ground to player (this is the vector to apply gravity in).
+                Vector2 gravityDirection;
+                gravityDirection.x = this->pos.x - groundPos.x;
+                gravityDirection.y = this->pos.y - groundPos.y;
+
+                // Normalize the gravity direction vector.
+                gravityDirection = Vector2Normalize(gravityDirection);
+
+                Vector2 gravityForce = Vector2Scale(gravityDirection, Entity::gravity * 10.0f);
+                 
+                ground->ApplyForce(gravityForce, deltaTime);
+            }
+        }
+    }
+
+    // Render the player using raylib DrawCircle function.
+    DrawCircle(this->pos.x, this->pos.y, 50.0f, BLACK);
+>>>>>>> 9d2b4ef4a73eeed5e1dae301d270585ea7d7106c
 }
 
 void Player::run(float delta, float direction){
@@ -91,7 +134,6 @@ void Player::run(float delta, float direction){
 
 void Player::jump(){
     this->currentVerticalSpeed = -verSpeed;
-    this->inAir = true;
 }
 
 float Player::GetCurrentVerticalSpeed(){
@@ -101,6 +143,7 @@ float Player::GetCurrentVerticalSpeed(){
 void Player::gravityFlip() {
     this->flipMultiplier = this->flipMultiplier * -1; // flip the multiplier
 }
+<<<<<<< HEAD
 
 #pragma region Initialize Animator Components
 void Player::InitializeAnimations(){
@@ -151,3 +194,5 @@ void Player::SetConditions(){
     }
 }
 #pragma endregion
+=======
+>>>>>>> 9d2b4ef4a73eeed5e1dae301d270585ea7d7106c
