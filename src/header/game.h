@@ -31,6 +31,8 @@ class Game {
         std::vector<Entity *> grounds;
         bool settingsFlag;
         bool controlFlag;
+        Camera2D camera;
+        void updateCameraSmoothFollowInsideMap(float);
 };
 
 #endif

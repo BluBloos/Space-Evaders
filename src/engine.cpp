@@ -5,10 +5,7 @@
 
 int main(void)
 {
-    const int screenWidth = 850;
-    const int screenHeight = 600;
-
-    InitWindow(screenWidth, screenHeight, "Space Evaders");
+    InitWindow(SCREENWIDTH, SCREENHEIGHT, "Space Evaders");
 
     // Make a new game object.
     Game *myGame = new Game(); // Note(Chong): The game must be initialized after InitWindow. Because OpenGL context is required for textures
