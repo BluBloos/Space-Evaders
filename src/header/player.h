@@ -11,7 +11,6 @@ class Player : public RenderableEntity{
         void update(Game *) override;
         float GetCurrentVerticalSpeed();
         constexpr static const float blackHoleCoeff = 20.0f;
-        bool alive;
 
     private:
         // attr

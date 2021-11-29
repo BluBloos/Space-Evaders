@@ -35,15 +35,23 @@ void Game::GameUpdateAndRender() {
     // Calling raylib function GetFrameTime to return the time in seconds for the last frame drawn.
     float deltaTime = GetFrameTime();
 
-    // Go through loop of all entities and call update.
-    for (unsigned int i = 0; i < this->grounds.size(); i++) {
-        Entity *entity = this->grounds[i];
-        entity->update(this);
+    if (gameOver){
+        showGameOver();
+        if (IsKeyPressed(KEY_ENTER)) { switchGameOver(); }
     }
-    for (unsigned int i = 0; i < this->characters.size(); i++) {
-        Entity *entity = this->characters[i];
-        entity->update(this);
+    else {
+        // Go through loop of all entities and call update.
+        for (unsigned int i = 0; i < this->grounds.size(); i++) {
+            Entity *entity = this->grounds[i];
+            entity->update(this);
+        }
+        for (unsigned int i = 0; i < this->characters.size(); i++) {
+            Entity *entity = this->characters[i];
+            entity->update(this);
+        }
     }
+
+
     EndDrawing();
 }
 
@@ -63,3 +71,13 @@ Game::~Game() {
 
     std::cout << "Game has been closed\n";
 }
+
+void Game::showGameOver() {
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), RED);
+    DrawText("Game Over", GetScreenWidth()*0.225, GetScreenHeight()*0.3, 100, RAYWHITE);
+    DrawText("Press Enter to Respawn", GetScreenWidth()*0.225, GetScreenHeight()*0.6, 40, RAYWHITE);
+}
+
+void Game::switchGameOver() { this->gameOver = !this->gameOver; }
+
+bool Game::getGameOver() { return this->gameOver; }

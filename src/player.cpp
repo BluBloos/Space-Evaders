@@ -1,7 +1,6 @@
 #include "header/player.h"
 #include "header/game.h"
 #include "header/ground.h"
-#include "header/gameover.h"
 #include <iostream>
 
 
@@ -9,7 +8,6 @@ Player::Player(Vector2 v, int layer) : RenderableEntity(v, layer){
     this->currentVerticalSpeed = 0.0;
     this->inAir = true;
     this->flipMultiplier = 1;
-    this->alive = true;
 }
 
 void Player::update(Game *game){
@@ -18,18 +16,18 @@ void Player::update(Game *game){
 
     // Handle the horizontal movement of player
     float dir = 0.0f;
-    if (IsKeyDown(KEY_A && this->alive)) {dir = -1.0f;}
-    if (IsKeyDown(KEY_D && this->alive)) {dir = 1.0f;}
+    if (IsKeyDown(KEY_A)) {dir = -1.0f;}
+    if (IsKeyDown(KEY_D)) {dir = 1.0f;}
     this->run(deltaTime, dir);
 
     // Code for the jumping routine.
-    if (IsKeyDown(KEY_SPACE) && !this->inAir && this->alive) {
+    if (IsKeyDown(KEY_SPACE) && !this->inAir) {
         this->inAir = true;
         this->jump();
     }
 
     // Code for the gravity flip routine.
-    if (IsKeyDown(KEY_F) && !this->inAir && this->alive) {
+    if (IsKeyDown(KEY_F) && !this->inAir) {
         this->gravityFlip();
     }
 
@@ -60,7 +58,7 @@ void Player::update(Game *game){
         // TODO: Check if player is touching top or bottom of the screen, in which case, send them back to spawn (?).
 
         if (this->pos.y <= 0){ //player has fell off the world -> kill them
-            gameover gg(); //creates an instance of the gameover class which will create a rectangle until
+            game->switchGameOver();
             }
     }
 
@@ -71,7 +69,7 @@ void Player::update(Game *game){
     }
 
     // Gravity function of the player
-    if (IsKeyDown(KEY_G  && this->alive)) {
+    if (IsKeyDown(KEY_G)) {
         // Activate the black hole and move all platforms to the player.
         std::vector<Entity *> grounds = game->GetGrounds();
         for (unsigned int i = 0; i < grounds.size(); i++) { 

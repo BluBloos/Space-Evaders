@@ -17,9 +17,14 @@ class Game {
         std::vector<Entity *> GetGrounds(); // Will return all the ground entities
         float GetLastFrameTime();
 
+        bool getGameOver();
+        void switchGameOver();
+        void showGameOver();
+
     private:
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
+        bool gameOver;
 };
 
 #endif
