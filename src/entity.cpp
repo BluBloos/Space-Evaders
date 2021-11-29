@@ -33,11 +33,17 @@ RenderableEntity::RenderableEntity(Vector2 v, int layer) : Entity(v, layer){}
 
 // public functions
 void RenderableEntity::update(Game *game){}
+void RenderableEntity::InitializeAnimations(){}
+void RenderableEntity::SetConditions(){}
+void RenderableEntity::SetTransitions(){}
+std::unordered_map<std::string, Animation>* RenderableEntity::GetAnimations(){
+    return &(this->animations);
+}
 
 RenderableEntity::~RenderableEntity(){
     if (!this->animations.empty()) {
-        for (Animation anim : this->animations) {
-            UnloadTexture(anim.sprite);
+        for (auto& anim : this->animations) {
+            UnloadTexture(anim.second.sprite);
         }
     }
 }
