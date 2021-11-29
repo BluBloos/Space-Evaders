@@ -4,6 +4,7 @@
 #include "entity.cpp"
 #include "ground.cpp"
 #include "header/game.h"
+#include <iostream>
 
 
 // Define the things that happen when the game is initialized.
@@ -19,7 +20,9 @@ Game::Game() {
     this->grounds.push_back((Entity *)epic_ground);
 
     // this->titleSprite = LoadTexture("./resources/evaderSprite.png");
-    onTitle = true;
+    this->onTitle = true;
+    this->controlFlag = true; // control flag to swap between WASD and arrow keys
+    this->settingsFlag = false; // settings flag to display settings
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -48,17 +51,26 @@ void Game::GameUpdateAndRender() {
         // Calling raylib function GetFrameTime to return the time in seconds for the last frame drawn.
         float deltaTime = GetFrameTime();
 
-        // Go through loop of all entities and call update.
-        for (unsigned int i = 0; i < this->grounds.size(); i++) {
-            Entity *entity = this->grounds[i];
-            entity->update(this);
+        if (IsKeyPressed(KEY_P)) { // if user hits escape
+            this->setSettingsFlag(); // switch settings flag
         }
-        for (unsigned int i = 0; i < this->characters.size(); i++) {
-            Entity *entity = this->characters[i];
-            entity->update(this);
+
+        if (settingsFlag){
+            showSettings();
+        }
+
+        else {
+            // Go through loop of all entities and call update.
+            for (unsigned int i = 0; i < this->grounds.size(); i++) {
+                Entity *entity = this->grounds[i];
+                entity->update(this);
+            }
+            for (unsigned int i = 0; i < this->characters.size(); i++) {
+                Entity *entity = this->characters[i];
+                entity->update(this);
+            }
         }
     }
-
 
     EndDrawing();
 }
@@ -67,15 +79,14 @@ void Game::GameUpdateAndRender() {
 Game::~Game() {
 
     // Clean up entities.
-	for (unsigned int i = 0; i < this->grounds.size(); i++) {
-	        Entity *entity = this->grounds[i];
-	        delete entity;
-	}
     for (unsigned int i = 0; i < this->characters.size(); i++) {
         Entity *entity = this->characters[i];
         delete entity; // NOTE(Noah): Pretty sure this works...
     }
-
+    for (unsigned int i = 0; i < this->grounds.size(); i++) {
+        Entity *entity = this->grounds[i];
+        delete entity;
+    }
 
     std::cout << "Game has been closed\n";
 }
@@ -86,3 +97,32 @@ void Game::showTitle() {
     DrawText("Press Enter to Start", GetScreenWidth()*0.2, GetScreenHeight()*0.8, 50, RAYWHITE);
     // DrawTexture(this->titleSprite, GetScreenWidth()*0.25, GetScreenHeight()*0.7, RAYWHITE);
 }
+void Game::showSettings() {
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
+    DrawText("Controls", GetScreenWidth()*0.325, GetScreenHeight()*0.1, 75, RAYWHITE);
+    DrawText("Press Enter to Switch Movement", GetScreenWidth()*0.1, GetScreenHeight()*0.4, 40, RAYWHITE);
+
+    if (IsKeyPressed(KEY_ENTER)){ setControlFlag(); }
+
+    if (getControlFlag()) {
+        DrawText("Movement: WASD", GetScreenWidth()*0.1, GetScreenHeight()*0.5, 40, RAYWHITE);
+    }
+
+    else {
+        DrawText("Movement: Arrow Keys", GetScreenWidth()*0.1, GetScreenHeight()*0.5, 40, RAYWHITE);
+    }
+
+    DrawText("Jump: Space", GetScreenWidth()*0.1, GetScreenHeight()*0.6, 40, RAYWHITE);
+    DrawText("Gravity Flip: F", GetScreenWidth()*0.1, GetScreenHeight()*0.7, 40, RAYWHITE);
+    DrawText("Black Hole: G", GetScreenWidth()*0.1, GetScreenHeight()*0.8, 40, RAYWHITE);
+}
+
+void Game::setSettingsFlag() {
+    this->settingsFlag = !this->settingsFlag; // switch flag
+}
+
+void Game::setControlFlag() {
+    this->controlFlag = !this->controlFlag; // switch control flag
+}
+
+bool Game::getControlFlag() { return this->controlFlag; }
