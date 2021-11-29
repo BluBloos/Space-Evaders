@@ -25,7 +25,7 @@ class Entity {
 
     protected: 
         Vector2 pos;
-        static const int gravity = 400; // NOTE(Noah): Should use this type of initialization over gravity{400}
+        static const int gravity = 4000; // NOTE(Noah): Should use this type of initialization over gravity{400}
         int collisionLayer;
 };
 

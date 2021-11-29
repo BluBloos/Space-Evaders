@@ -16,7 +16,7 @@ class Player : public RenderableEntity{
     private:
         // attr
         float currentVerticalSpeed;
-        const float horSpeed = 280.0f;
+        const float horSpeed = 600.0f;
         const float verSpeed = 310.0f;
         bool inAir;
         int flipMultiplier;

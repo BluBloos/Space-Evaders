@@ -89,11 +89,10 @@ void Game::GameUpdateAndRender() {
     EndDrawing();
 }
 
-// TODO: We want to put an if statement over the entire thing. 
-// This way we can do the screen edge boundary thing.
-// So we keep the smooth follow stuff, but only if the player is on the edge of the screen.
+// NOTE(Noah): Camera speed must be exactly player speed to avoid buggy behaviour.
+// Overall this type of camera moement feels nice!!!!
 void Game::updateCameraSmoothFollowInsideMap(float delta){
-    float minSpeed = 50.0f;
+    float minSpeed = 600.0f;
     float minEffectLength = 5.0f;
     float fractionSpeed = 0.8f;
 
@@ -101,8 +100,8 @@ void Game::updateCameraSmoothFollowInsideMap(float delta){
     //this->camera.offset = (Vector2){ SCREENWIDTH/2.0f - OFFSETCORRECTVALUE, SCREENHEIGHT/2.0f };
     Vector2 diff = Vector2Subtract(playerPos, this->camera.target);
 
-    float fringeLenX = 300.0f; // 50 pixels of the sides of screen.
-    float fringeLenY = 200.0f;
+    float fringeLenX = 200.0f; // 50 pixels of the sides of screen.
+    float fringeLenY = 100.0f;
     bool playerOnFringeX = abs(this->camera.target.x - playerPos.x) > SCREENWIDTH/2.0f - fringeLenX;
     bool playerOnFringeY = abs(this->camera.target.y - playerPos.y) > SCREENHEIGHT/2.0f - fringeLenY;
 

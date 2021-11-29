@@ -93,7 +93,7 @@ void Player::update(Game *game){
     // Update the vertical movement of the player, note the flip multiplier.
     if (this->inAir) {
         this->pos.y += this->currentVerticalSpeed * deltaTime * flipMultiplier;
-        this->currentVerticalSpeed += this->currentVerticalSpeed < 0 ? Entity::gravity * deltaTime : Entity::gravity * deltaTime * 1.5f;
+        this->currentVerticalSpeed += Entity::gravity * deltaTime;
     }
 
     // Gravity function of the player
@@ -129,7 +129,7 @@ void Player::run(float delta, float direction){
 }
 
 void Player::jump(){
-    this->currentVerticalSpeed = -verSpeed;
+    this->currentVerticalSpeed = - sqrtf(Entity::gravity * 2 * 160); // 160 has units of pixels. Setting V0 for max jump height of 160.
     this->inAir = true;
 }
 
