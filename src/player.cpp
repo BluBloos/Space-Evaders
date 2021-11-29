@@ -25,30 +25,36 @@ void Player::update(Game *game){
 
     // Handle the horizontal movement of player
     float dir = 0.0f;
-    if (IsKeyDown(KEY_A)) {
-        dir = -1.0f;
+    if (game->getControlFlag()) {
+        if (IsKeyDown(KEY_A)) {dir = -1.0f;}
+        if (IsKeyDown(KEY_D)) {dir = 1.0f;}
+    }
+
+    else {
+        if (IsKeyDown(KEY_LEFT)) {dir = -1.0f;}
+        if (IsKeyDown(KEY_RIGHT)) {dir = 1.0f;}
+    }
+
+    if (dir == -1.0f) {
         this->myAnimator->FlipAnimation(LEFT);
         this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, true);   // Animator Example
     }
-    else if (IsKeyDown(KEY_D)) {
-        dir = 1.0f;
+    else if (dir == 1.0f) {
         this->myAnimator->FlipAnimation(RIGHT);
         this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, true);   // Animator Example
     }
     else {
         this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, false);  // Animator Example
     }
+
     this->run(deltaTime, dir); 
 
-    // Code for the jumping routine.
-    if (IsKeyDown(KEY_SPACE) && !this->inAir) {
-        this->jump();
-    }
+    
 
     // Code for the gravity flip routine.
-    if (IsKeyDown(KEY_F) && !this->inAir) {
+    /*if (IsKeyDown(KEY_F) && !this->inAir) {
         this->gravityFlip();
-    }
+    }*/
 
     // Player collision code
     {
@@ -60,8 +66,8 @@ void Player::update(Game *game){
                 // The player has collided with the ground. Stop movement.
                 this->inAir = false;
                 this->currentVerticalSpeed = 0.0f;
-                this->pos.y = ground->GetPos().y - this->animations.at(PLAYER_ANIMATIONSTART_NAME).sprite.height; // snap the y position of the player.
-
+                //this->pos.y = ground->GetPos().y - this->animations.at(PLAYER_ANIMATIONSTART_NAME).sprite.height; // snap the y position of the player.
+                this->pos.y = ground->GetPos().y;
                 break;
             }
         }
@@ -76,10 +82,41 @@ void Player::update(Game *game){
         // TODO: Check if player is touching top or bottom of the screen, in which case, send them back to spawn (?).
     }
 
+    // Code for the jumping routine.
+    // NOTE(Noah): Moved the jumping routine below so that we don't snap the player back to the platform right away...
+    if (IsKeyDown(KEY_SPACE) && !this->inAir) {
+        this->jump();
+    }
+
     // Update the vertical movement of the player, note the flip multiplier.
     if (this->inAir) {
         this->pos.y += this->currentVerticalSpeed * deltaTime * flipMultiplier;
         this->currentVerticalSpeed += this->currentVerticalSpeed < 0 ? Entity::gravity * deltaTime : Entity::gravity * deltaTime * 1.5f;
+    }
+
+    // Gravity function of the player
+    if (IsKeyDown(KEY_G)) {
+        // Activate the black hole and move all platforms to the player.
+        std::vector<Entity *> grounds = game->GetGrounds();
+        for (unsigned int i = 0; i < grounds.size(); i++) { 
+            Ground *ground = (Ground *)grounds[i];
+            if (ground->IsMovable()) {
+
+                Vector2 groundPos = ground->GetPos();
+
+                // Generate vector from ground to player (this is the vector to apply gravity in).
+                Vector2 gravityDirection;
+                gravityDirection.x = this->pos.x - groundPos.x;
+                gravityDirection.y = this->pos.y - groundPos.y;
+
+                // Normalize the gravity direction vector.
+                gravityDirection = Vector2Normalize(gravityDirection);
+
+                Vector2 gravityForce = Vector2Scale(gravityDirection, Entity::gravity * 10.0f);
+                 
+                ground->ApplyForce(gravityForce, deltaTime);
+            }
+        }
     }
 
     this->myAnimator->PlayAnimation();

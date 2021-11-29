@@ -16,10 +16,16 @@ class Game {
 
         std::vector<Entity *> GetGrounds(); // Will return all the ground entities
         float GetLastFrameTime();
+        void showSettings();
+        void setSettingsFlag();
+        void setControlFlag();
+        bool getControlFlag();
 
     private:
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
+        bool settingsFlag;
+        bool controlFlag;
 };
 
 #endif

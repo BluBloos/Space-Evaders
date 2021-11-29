@@ -43,7 +43,8 @@ void Animator::PlayAnimation() {
     }
 
     // Draw part of the texture
-    DrawTextureRec(this->currentAnimation->sprite, this->currentAnimation->frameRec, this->target->GetPos(), WHITE);
+    Vector2 drawPos = Vector2Subtract(this->target->GetPos(), Vector2{0, (float)this->currentAnimation->sprite.height}); // NOTE(Noah): Defining position of player as bottom of sprite.
+    DrawTextureRec(this->currentAnimation->sprite, this->currentAnimation->frameRec, drawPos, WHITE);
     
     // No matter the animation changed or not, reset all trigger if any has been set to be true.
     if (!this->openTrigger.empty()) {

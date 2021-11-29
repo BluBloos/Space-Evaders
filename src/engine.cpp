@@ -6,7 +6,7 @@
 int main(void)
 {
     const int screenWidth = 800;
-    const int screenHeight = 400;
+    const int screenHeight = 600;
 
     InitWindow(screenWidth, screenHeight, "Space Evaders");
 
