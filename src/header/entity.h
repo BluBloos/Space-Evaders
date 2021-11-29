@@ -2,12 +2,16 @@
 #define ENTITY_H
 
 #include "raylib_wrapped.h"
+#include "animator.h"
+#include "resource.h"
+#include <unordered_map>
+
 class Game;
 
 class Entity {
     public:
         Entity();
-
+        virtual ~Entity();
         // Build entity with position and collision layer 
         Entity(Vector2, int);
 
@@ -29,8 +33,20 @@ class RenderableEntity : public Entity {
     public:
         RenderableEntity();
         RenderableEntity(Vector2, int);
+        virtual ~RenderableEntity();
     
-    public:
         virtual void update(Game *);
+
+        std::unordered_map<std::string, Animation>* GetAnimations();
+
+    protected:
+        Animator* myAnimator;
+        std::unordered_map<std::string, Animation> animations;
+        // Initialize All Animations and put into animations.
+        virtual void InitializeAnimations();
+        // Initialize all transitions between animations
+        virtual void SetTransitions();
+        // Initialize all conditions
+        virtual void SetConditions();
 };
 #endif

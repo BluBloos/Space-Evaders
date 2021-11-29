@@ -4,6 +4,7 @@
 #include "entity.cpp"
 #include "ground.cpp"
 #include "header/game.h"
+#include <iostream>
 
 
 // Define the things that happen when the game is initialized.
@@ -66,15 +67,14 @@ void Game::GameUpdateAndRender() {
 Game::~Game() {
 
     // Clean up entities.
-	for (unsigned int i = 0; i < this->grounds.size(); i++) {
-	        Entity *entity = this->grounds[i];
-	        delete entity;
-	}
     for (unsigned int i = 0; i < this->characters.size(); i++) {
         Entity *entity = this->characters[i];
         delete entity; // NOTE(Noah): Pretty sure this works...
     }
-
+    for (unsigned int i = 0; i < this->grounds.size(); i++) {
+        Entity *entity = this->grounds[i];
+        delete entity;
+    }
 
     std::cout << "Game has been closed\n";
 }
