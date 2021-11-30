@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "entity.h"
+#include "star.h"
 #include <vector>
 
 class Game {
@@ -34,6 +35,7 @@ class Game {
     private:
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
+        Star stars[200];
         bool gameOver;
         bool settingsFlag;
         bool controlFlag;
@@ -42,6 +44,3 @@ class Game {
 };
 
 #endif
-
-
-
