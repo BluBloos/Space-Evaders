@@ -1,12 +1,11 @@
 #include "header/player.h"
 #include "header/game.h"
 #include "header/ground.h"
-
+#include "header/enemy.h"
 #include "animator.cpp"
 #include <iostream>
 
-Player::Player(Vector2 v, int layer) : RenderableEntity(v, layer){ 
-
+Player::Player(Vector2 v, int layer) : Character(v, layer){
     this->currentVerticalSpeed = 0.0;
     this->inAir = true;
     this->flipMultiplier = 1;
@@ -73,6 +72,21 @@ void Player::update(Game *game){
                 this->inAir = true;
             }
         }
+
+        // Check if player has collided with any enemies
+        std::vector<Entity *> enemies = game->GetCharacters();
+		for (unsigned int i = 1; i < enemies.size(); i++) {
+			Enemy *enemy = (Enemy *)enemies[i];
+			if (enemy->EnemyCollide(this)){
+				// TODO: Change code to procedure for ending game once task is completed
+				this->inAir = false;
+				this->currentVerticalSpeed = 0.0f;
+				this->pos.y = enemy->GetPos().y; // snap the y position of the player.
+				break;
+			}
+		}
+
+
         // TODO: Check if the player is touching the sides of the screen.
         if (this->pos.x < 0) {
             this->pos.x = 0; // Snap the player.

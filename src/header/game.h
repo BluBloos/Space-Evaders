@@ -15,6 +15,7 @@ class Game {
         void GameUpdateAndRender();
 
         std::vector<Entity *> GetGrounds(); // Will return all the ground entities
+        std::vector<Entity *> GetCharacters(); // Will return all the ground entities
         float GetLastFrameTime();
         void showSettings();
         void setSettingsFlag();
