@@ -25,6 +25,7 @@ class Game {
 
         bool onTitle;
         Texture2D titleSprite;
+        Texture2D moonTexture;
         // void showTitle(Texture2D sprite);
         void showTitle();
 
@@ -41,6 +42,7 @@ class Game {
         bool controlFlag;
         Camera2D camera;
         void updateCameraSmoothFollowInsideMap(float);
+        
 };
 
 #endif

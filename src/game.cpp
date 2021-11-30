@@ -37,6 +37,8 @@ Game::Game() {
     camera.offset = (Vector2){ SCREENWIDTH/2.0f, SCREENHEIGHT/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
+
+    this->moonTexture = LoadTexture("arts/moon.png");
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -171,6 +173,9 @@ Game::~Game() {
         Entity *entity = this->grounds[i];
         delete entity;
     }
+
+    // unload the moon texture.
+    UnloadTexture(this->moonTexture);
 
     std::cout << "Game has been closed\n";
 }
