@@ -8,6 +8,7 @@
 #include "resource.h"
 #include "star.cpp"
 #include <iostream>
+#include "coin.cpp"
 
 #define PLAYER_SPAWN (Vector2){0.0f, 400.0f}
 #define PLAYER_CHARACTER_INDEX 0
@@ -27,7 +28,10 @@ Game::Game() {
     //epic_ground->SetOscillation(); // set the platform to go back and forth in movement
     this->grounds.push_back((Entity *)epic_ground);
 
-    // this->titleSprite = LoadTexture("./resources/evaderSprite.png");
+    this->coins.push_back(coin(400, 30));
+    this->coins.push_back(coin(700, 30));
+    this->coins.push_back(coin(700, 200));
+
     this->onTitle = true;
     this->controlFlag = true; // control flag to swap between WASD and arrow keys
     this->settingsFlag = false; // settings flag to display settings
@@ -37,6 +41,8 @@ Game::Game() {
     camera.offset = (Vector2){ SCREENWIDTH/2.0f, SCREENHEIGHT/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
+
+    score = 0;
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -93,7 +99,10 @@ void Game::GameUpdateAndRender() {
 
         if (gameOver){
             showGameOver();
-            if (IsKeyPressed(KEY_ENTER)) { switchGameOver(); }
+            if (IsKeyPressed(KEY_ENTER)) { switchGameOver();
+            for (int i = 0; i < coins.size(); i++) { // put all coins back
+                coins[i].setCollected(false);
+            }}
         }
         else {
 
@@ -117,6 +126,19 @@ void Game::GameUpdateAndRender() {
                     entity->update(this);
                 }
 
+                Vector2 coords = characters[0]->GetPos();
+                for (unsigned int i = 0; i < this->coins.size(); i++) { // loop through coins and show
+                    coins[i].showCoin();
+                    if ((coords.x >= (coins[i].getX() - 25)) && (coords.x <= (coins[i].getX() + 25)) && (coords.y >= (coins[i].getY() - 15)) && (coords.y <= (coins[i].getY() + 35))){
+                        // if player touches coin, set coin to collected
+                        coins[i].isCollected();
+                    }
+                }
+
+                std::cout << "x: " << coords.x << " y: " << coords.y << std::endl;
+                //if (coords.x < )
+                DrawText("Score: ", coords.x, 10, 30, RAYWHITE);
+                //DrawText(std::to_string(score), 10, GetScreenHeight()*0.9, 30, RAYWHITE);
                 EndMode2D();
             }
         }
