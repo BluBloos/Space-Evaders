@@ -130,15 +130,16 @@ void Game::GameUpdateAndRender() {
                 for (unsigned int i = 0; i < this->coins.size(); i++) { // loop through coins and show
                     coins[i].showCoin();
                     if ((coords.x >= (coins[i].getX() - 25)) && (coords.x <= (coins[i].getX() + 25)) && (coords.y >= (coins[i].getY() - 15)) && (coords.y <= (coins[i].getY() + 35))){
+                        if (!coins[i].getCollected()) {score = score + 10; }
                         // if player touches coin, set coin to collected
                         coins[i].isCollected();
+
                     }
                 }
 
                 std::cout << "x: " << coords.x << " y: " << coords.y << std::endl;
                 //if (coords.x < )
-                DrawText("Score: ", coords.x, 10, 30, RAYWHITE);
-                //DrawText(std::to_string(score), 10, GetScreenHeight()*0.9, 30, RAYWHITE);
+                DrawText(FormatText("Score: %i", score), camera.target.x - 410, camera.target.y - 295, 30, RAYWHITE);
                 EndMode2D();
             }
         }
