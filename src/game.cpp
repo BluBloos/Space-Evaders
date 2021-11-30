@@ -6,6 +6,7 @@
 #include "enemy.cpp"
 #include "game.h"
 #include "resource.h"
+#include "star.cpp"
 #include <iostream>
 
 #define PLAYER_SPAWN (Vector2){0.0f, 400.0f}
@@ -52,9 +53,26 @@ float Game::GetLastFrameTime() {
 
 // Define what will happen each frame of the game.
 void Game::GameUpdateAndRender() {
+
+	for (int i = 0; i < 200; i++) {
+		this->stars[i].x -= 12 * (stars[i].z / 1);
+
+		if (this->stars[i].x <= 0) {  // Check if the star has gone off screen
+			this->stars[i].x += 2000;
+			this->stars[i].y = GetRandomValue(0, 1000);
+		}
+	}
+
     BeginDrawing(); 
-    ClearBackground(RAYWHITE);
-    
+    ClearBackground(BLACK);
+
+    for (int i = 0; i < 200; i++) {
+		float x = this -> stars[i].x;
+		float y = this -> stars[i].y;
+
+		DrawPixel(x, y, WHITE);
+	}
+
     if (onTitle){ // still on title screen
         showTitle();
         if (IsKeyPressed(KEY_ENTER)){ // if enter is pressed, start game
@@ -67,6 +85,7 @@ void Game::GameUpdateAndRender() {
 
         // Calling raylib function GetFrameTime to return the time in seconds for the last frame drawn.
         float deltaTime = GetFrameTime();
+
 
         if (IsKeyPressed(KEY_P)) { // if user hits escape
             this->setSettingsFlag(); // switch settings flag
