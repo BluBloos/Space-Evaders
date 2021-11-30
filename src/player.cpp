@@ -90,6 +90,17 @@ void Player::update(Game *game){
         this->jump();
     }
 
+    if (game->getControlFlag()){
+        if(IsKeyDown(KEY_W) && !this->inAir){
+            this->jump();
+        }
+    }
+    else {
+        if(IsKeyDown(KEY_UP) && !this->inAir){
+            this->jump();
+        }
+    }
+
     // Update the vertical movement of the player, note the flip multiplier.
     if (this->inAir) {
         this->pos.y += this->currentVerticalSpeed * deltaTime * flipMultiplier;
