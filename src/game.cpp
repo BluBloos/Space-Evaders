@@ -70,7 +70,7 @@ void Game::GameUpdateAndRender() {
 		float x = this -> stars[i].x;
 		float y = this -> stars[i].y;
 
-		DrawPixel(x, y, WHITE);
+		DrawRectangle(x, y, 8*stars[i].z, 8*stars[i].z, RAYWHITE);
 	}
 
     if (onTitle){ // still on title screen
