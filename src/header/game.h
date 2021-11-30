@@ -15,7 +15,17 @@ class Game {
         void GameUpdateAndRender();
 
         std::vector<Entity *> GetGrounds(); // Will return all the ground entities
+        std::vector<Entity *> GetCharacters(); // Will return all the ground entities
         float GetLastFrameTime();
+        void showSettings();
+        void setSettingsFlag();
+        void setControlFlag();
+        bool getControlFlag();
+
+        bool onTitle;
+        Texture2D titleSprite;
+        // void showTitle(Texture2D sprite);
+        void showTitle();
 
         bool getGameOver();
         void switchGameOver();
@@ -25,6 +35,10 @@ class Game {
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
         bool gameOver;
+        bool settingsFlag;
+        bool controlFlag;
+        Camera2D camera;
+        void updateCameraSmoothFollowInsideMap(float);
 };
 
 #endif

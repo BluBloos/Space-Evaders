@@ -2,5 +2,4 @@
 #define RAYLIB_SPACE_EVADER
 #include "raylib.h"
 #include "raymath.h"
-#define CLITERAL(Type) (Type)
 #endif

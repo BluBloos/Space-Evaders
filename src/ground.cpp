@@ -98,3 +98,10 @@ bool Ground::TouchGround(Player *target, float deltaTime){
             this->pos.y           <= player->GetPos().y &&
             this->pos.y + this->height > player->GetPos().y );
 }
+
+float Ground::getWidth(){
+    return this->width;
+}
+float Ground::getHeight(){
+    return this->height;
+}

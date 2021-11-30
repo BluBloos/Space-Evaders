@@ -7,5 +7,5 @@ popd
 
 mkdir bin
 pushd bin
-clang++ -g -std=c++11 -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL ../src/engine.cpp -o SpaceEvaders -I ../src/ -I ../raylib/src -L ../raylib/src/  -lraylib
+clang++ -g -std=c++11 -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL ../src/engine.cpp -o SpaceEvaders -I ../src/ -I ../src/header/ -I ../raylib/src -L ../raylib/src/  -lraylib
 popd
