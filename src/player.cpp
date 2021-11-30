@@ -78,10 +78,7 @@ void Player::update(Game *game){
 		for (unsigned int i = 1; i < enemies.size(); i++) {
 			Enemy *enemy = (Enemy *)enemies[i];
 			if (enemy->EnemyCollide(this)){
-				// TODO: Change code to procedure for ending game once task is completed
-				this->inAir = false;
-				this->currentVerticalSpeed = 0.0f;
-				this->pos.y = enemy->GetPos().y; // snap the y position of the player.
+				game->switchGameOver(); // TODO: Maybe give the player like health or something!! Good animation on death, etc.
 				break;
 			}
 		}
@@ -96,6 +93,10 @@ void Player::update(Game *game){
             this->pos.x = 3950;
         }
         // TODO: Check if player is touching top or bottom of the screen, in which case, send them back to spawn (?).
+
+        if (this->pos.y <= 0){ //player has fell off the world -> kill them
+            game->switchGameOver();
+            }
     }
 
     // Code for the jumping routine.

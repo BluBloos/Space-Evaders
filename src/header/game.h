@@ -27,9 +27,14 @@ class Game {
         // void showTitle(Texture2D sprite);
         void showTitle();
 
+        bool getGameOver();
+        void switchGameOver();
+        void showGameOver();
+
     private:
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
+        bool gameOver;
         bool settingsFlag;
         bool controlFlag;
         Camera2D camera;

@@ -8,12 +8,14 @@
 #include "resource.h"
 #include <iostream>
 
+#define PLAYER_SPAWN (Vector2){0.0f, 400.0f}
+#define PLAYER_CHARACTER_INDEX 0
 
 // Define the things that happen when the game is initialized.
 Game::Game() {
     std::cout << "Game has been initialized\n\n";
     // Create game entities.
-    this->characters.push_back(new Player((Vector2){500.0f, 100.0f}, 0));
+    this->characters.push_back(new Player(PLAYER_SPAWN, 0));
     Enemy *evil_enemy = new Enemy((Vector2){700.0f, 200.0f}, 0);
     evil_enemy->SetMovable(true, 0, -1, 100, 100);
     this->characters.push_back((Entity *)evil_enemy);
@@ -52,7 +54,7 @@ float Game::GetLastFrameTime() {
 void Game::GameUpdateAndRender() {
     BeginDrawing(); 
     ClearBackground(RAYWHITE);
-
+    
     if (onTitle){ // still on title screen
         showTitle();
         if (IsKeyPressed(KEY_ENTER)){ // if enter is pressed, start game
@@ -70,27 +72,34 @@ void Game::GameUpdateAndRender() {
             this->setSettingsFlag(); // switch settings flag
         }
 
-        if (settingsFlag){
-            showSettings();
+        if (gameOver){
+            showGameOver();
+            if (IsKeyPressed(KEY_ENTER)) { switchGameOver(); }
         }
-
         else {
 
-            this->updateCameraSmoothFollowInsideMap(deltaTime);
-            BeginMode2D(this->camera);
-
-
-            // Go through loop of all entities and call update.
-            for (unsigned int i = 0; i < this->grounds.size(); i++) {
-                Entity *entity = this->grounds[i];
-                entity->update(this);
-            }
-            for (unsigned int i = 0; i < this->characters.size(); i++) {
-                Entity *entity = this->characters[i];
-                entity->update(this);
+            if (settingsFlag){
+                showSettings();
             }
 
-            EndMode2D();
+            else {
+
+                this->updateCameraSmoothFollowInsideMap(deltaTime);
+                BeginMode2D(this->camera);
+
+
+                // Go through loop of all entities and call update.
+                for (unsigned int i = 0; i < this->grounds.size(); i++) {
+                    Entity *entity = this->grounds[i];
+                    entity->update(this);
+                }
+                for (unsigned int i = 0; i < this->characters.size(); i++) {
+                    Entity *entity = this->characters[i];
+                    entity->update(this);
+                }
+
+                EndMode2D();
+            }
         }
     }
 
@@ -147,6 +156,24 @@ Game::~Game() {
     std::cout << "Game has been closed\n";
 }
 
+void Game::showGameOver() {
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), RED);
+    DrawText("Game Over", GetScreenWidth()*0.225, GetScreenHeight()*0.3, 100, RAYWHITE);
+    DrawText("Press Enter to Respawn", GetScreenWidth()*0.225, GetScreenHeight()*0.6, 40, RAYWHITE);
+}
+
+void Game::switchGameOver() { 
+    
+    if (this->gameOver == false) {
+        // we are going from not gameover to a gameover state.
+        // thus, we reset the position of the player!
+        this->characters[PLAYER_CHARACTER_INDEX]->SetPos(PLAYER_SPAWN);
+    }
+    this->gameOver = !this->gameOver;
+
+}
+
+bool Game::getGameOver() { return this->gameOver; }
 void Game::showTitle() {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
     DrawText("Space Evaders", GetScreenWidth()*0.1, GetScreenHeight()*0.3, 95, RAYWHITE);
