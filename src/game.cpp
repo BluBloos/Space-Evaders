@@ -107,7 +107,12 @@ void Game::GameUpdateAndRender() {
 
         if (gameOver){
             showGameOver();
-            if (IsKeyPressed(KEY_ENTER)) { switchGameOver(); }
+            if (IsKeyPressed(KEY_ENTER)) {
+                switchGameOver();
+                oxygenRemaining = maxO2;
+                for (int i = 0; i < tanks.size(); i++) { // put all coins back
+                    tanks[i].setCollected(false);
+                }}
         }
         else {
 
@@ -142,6 +147,10 @@ void Game::GameUpdateAndRender() {
                 }
 
                 DrawText(FormatText("Oxygen Remaining: %i", this->getO2()), camera.target.x + 103, camera.target.y - 295, 30, RAYWHITE);
+
+                if (this->oxygenRemaining < 1){
+                    this->switchGameOver();
+                }
 
                 EndMode2D();
             }
