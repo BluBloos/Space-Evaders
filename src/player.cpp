@@ -27,7 +27,7 @@ void Player::update(Game *game){
     if (this->runFlag) {
         
         // Handle the horizontal movement of player
-        float dir = 0.0f;
+        dir = 0.0f;
         if (game->getControlFlag()) {
             if (IsKeyDown(KEY_A)) {dir = -1.0f;}
             if (IsKeyDown(KEY_D)) {dir = 1.0f;}
@@ -64,13 +64,16 @@ void Player::update(Game *game){
         // Check if the player has hit any ground
         std::vector<Entity *> grounds = game->GetGrounds();
         for (unsigned int i = 0; i < grounds.size(); i++) { 
-            Ground *ground = (Ground *)grounds[i];
-            if (ground->TouchGround(this, deltaTime) && this->currentVerticalSpeed >= 0){
+            Ground *ground = (Ground *)grounds[i];  
+            
+            Vector2 newPlayerPos;
+            if (ground->TouchGround(this, deltaTime, &newPlayerPos) && this->currentVerticalSpeed >= 0){
+                this->pos = newPlayerPos;
                 // The player has collided with the ground. Stop movement.
                 this->inAir = false;
                 this->currentVerticalSpeed = 0.0f;
                 //this->pos.y = ground->GetPos().y - this->animations.at(PLAYER_ANIMATIONSTART_NAME).sprite.height; // snap the y position of the player.
-                this->pos.y = ground->GetPos().y;
+                //this->pos.y = ground->GetPos().y;
                 this->pos.x += deltaTime * ground->GetCurrentOscillationX();
                 this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND, true);
                 break;

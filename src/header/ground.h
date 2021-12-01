@@ -20,7 +20,8 @@ class Ground : public RenderableEntity{
         Ground(Vector2, int, int, int);
         void update(Game *) override;
         // TouchGround returns true if the target entity is touching this ground entity, otherwise TouchGround returns false.
-        bool TouchGround(Player*, float);
+        // sets the player position to valid location.
+        bool TouchGround(Player*, float, Vector2 *);
         void SetMovable(bool isMovable, float dirx, float diry, float osx, float osy);
         bool IsMovable() {return this->movable;};
         void ApplyForce(Vector2, float); // applies a force to the ground entity with the given delta time.

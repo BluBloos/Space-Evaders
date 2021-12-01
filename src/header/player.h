@@ -29,6 +29,7 @@ class Player : public Character{
         bool runFlag;
         int flipMultiplier;
         int score;
+        float dir;
         
         // The run function for the player updates the horizontal movement of the player based on frame deltaTime
         // and the direction of running.
