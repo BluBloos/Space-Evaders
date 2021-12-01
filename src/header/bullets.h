@@ -15,6 +15,7 @@ class Bullets : public Entity {
     // so a bullets object is basically this beam thing.
     // and there are many bullets inside of an array that are tracked by this bullets object.
 public:
+    ~Bullets();
     // Setting this object to active means it can accept bullet generation requests.
     void SetActive(Vector2, Vector2, float, float, bullet_hit_callback *);
     // We call SetTarget to define where the bullets stream is directed. May be called multiple times during SetActive.
@@ -25,6 +26,7 @@ public:
     void Deactivate();
     void update(Game *) override;
     Vector2 GetShootDir();
+    bool CheckCollisionWithRectangle(Rectangle rect, Vector2 lastBulletPos, Vector2 currentBulletPos, Vector2 *collisionPoint);
 private:
     // stores the list of bullets
     std::vector<Vector2> bullets;
@@ -34,5 +36,8 @@ private:
     bullet_hit_callback *callback;
     bool active;
     float bulletVelocity; // Velocity dimensions are in pixels / second.
+    #ifdef DEBUG
+    FILE *debugFileLog;
+    #endif
 };
 #endif 

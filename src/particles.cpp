@@ -50,7 +50,8 @@ void ParticleGenerator::update(Game *game) {
         // Kill the particle generator!!!!
         // TODO: Make this even better. Because the ParticleGenerator object still exists....
         this->particles.clear();
-        this->age = 0.0f; // quite the janky solution.
+        age = 0;
+        //delete this; // NOTE: We must always create particle generators with new keyword.
     }
     float deltaTime = GetFrameTime();
     this->age += deltaTime;

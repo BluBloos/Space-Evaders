@@ -35,7 +35,6 @@ class Game {
 
         // just debug things hehe
         Bullets *debugBulletObject;
-        ParticleGenerator *debugPGEN;
 
     private:
         std::vector<Entity *> characters;

@@ -17,28 +17,12 @@
 #define PLAYER_SPAWN (Vector2){0.0f, 390.0f} // Slightly above ground to be safe.
 #define PLAYER_CHARACTER_INDEX 0
 
-Game *debugGame = NULL;
-
 void DebugBulletHitCallback(bullet_hit_info info) {
-    // does nothing.
-    std::cout << "Debug bullet hit callback" << std::endl;
-    if (debugGame != NULL) {
-        if (debugGame->debugPGEN != NULL)
-            delete debugGame->debugPGEN;
-        debugGame->debugPGEN = new ParticleGenerator(
-            info.hitPos,
-            100.0f, // explosive force.
-            0.5f, // 5 seconds
-            2.0f, // particle spawn region
-            10, // particle amount
-            PURPLE
-        );
-    }
+    // does nothing :)
 }
 
 // Define the things that happen when the game is initialized.
 Game::Game() {
-    debugGame = this;
     std::cout << "Game has been initialized\n\n";
     //SetRandomSeed(); // set the random seed for the random number generator (Raylib function)
     // Create game entities.
@@ -74,15 +58,21 @@ Game::Game() {
         DebugBulletHitCallback
     );
 
-    // Debug particle generator
-    this->debugPGEN = new ParticleGenerator(
-        (Vector2){200.0f, 200.0f},
-        100.0f, // explosive force.
-        0.5f, // 5 seconds
-        2.0f, // particle spawn region
-        10, // particle amount
-        PURPLE
-    );
+    #ifdef DEBUG
+    // Unit test the debug bullet object
+    for (unsigned int i = 0; i < 1000; i++) {
+        Rectangle floatingPlatformRect = Rectangle{400.0f, 200.0f, 200, 100};
+        Vector2 collisionPoint;
+        bool result = this->debugBulletObject->CheckCollisionWithRectangle(
+            floatingPlatformRect, 
+            Vector2{650.0f, 250.0f},
+            Vector2{550.0f, 250.0f},
+            &collisionPoint
+        );
+        std::cout << "result of debugBulletObject->CheckCollisionWithRectangle() = " << result << std::endl;
+    }
+    // END OF UNIT TEST
+    #endif
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -100,6 +90,8 @@ float Game::GetLastFrameTime() {
 // Define what will happen each frame of the game.
 void Game::GameUpdateAndRender() {
 
+    
+
 	for (int i = 0; i < 200; i++) {
 		this->stars[i].x -= 12 * (stars[i].z / 1);
 
@@ -111,6 +103,7 @@ void Game::GameUpdateAndRender() {
 
     BeginDrawing(); 
     ClearBackground(BLACK);
+    
 
     for (int i = 0; i < 200; i++) {
 		float x = this -> stars[i].x;
@@ -167,13 +160,12 @@ void Game::GameUpdateAndRender() {
                 this->debugBulletObject->Shoot(); // create 60 bullets / second.
                 this->debugBulletObject->update(this); 
 
-                this->debugPGEN->update(this);
-
                 EndMode2D();
             }
         }
     }
 
+    DrawFPS(10, 550);
     EndDrawing();
 }
 
@@ -225,7 +217,6 @@ Game::~Game() {
     }
 
     delete this->debugBulletObject;
-    delete this->debugPGEN;
 
     std::cout << "Game has been closed\n";
 }

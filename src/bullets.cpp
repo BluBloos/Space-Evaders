@@ -7,9 +7,19 @@ void Bullets::SetActive(Vector2 origin, Vector2 target, float width, float bulle
     this->callback = callback;
     this->active = true;
     this->bulletVelocity = bulletVelocity;
+    #ifdef DEBUG
+    this->debugFileLog = fopen("bullets.LOG", "w");
+    #endif
 }
 
-void Bullets::Deactivate() { this->active = false; }
+Bullets::~Bullets() { this->Deactivate(); }
+
+void Bullets::Deactivate() { 
+    this->active = false; 
+    #ifdef DEBUG
+    fclose(this->debugFileLog);
+    #endif
+}
 void Bullets::SetTarget(Vector2 target) { this->target = target; }
 void Bullets::SetWidth(float width) { this->width = width; }
 
@@ -29,6 +39,36 @@ void Bullets::Shoot() {
 
 Vector2 Bullets::GetShootDir() {
     return Vector2Normalize(Vector2Subtract(this->target, this->origin));
+}
+
+bool Bullets::CheckCollisionWithRectangle(Rectangle rect, Vector2 lastBulletPos, Vector2 currentBulletPos, Vector2 *collisionPoint) {
+
+    bool result = CheckCollisionCircleRec(currentBulletPos, 3.0f, rect);
+
+    if (result) {
+        *collisionPoint = currentBulletPos;
+    }
+
+    #ifdef DEBUG
+    // Before we return we want to do some debug logging
+    fprintf(this->debugFileLog, 
+        "\nFunction called with rect of x=%f y=%f wid=%f height=%f.",
+        rect.x, rect.y, rect.width, rect.height
+    );
+    fprintf(this->debugFileLog, 
+        "\ncalled with lastBulletPos.x=%f and lastBulletPos.y=%f",
+        lastBulletPos.x, lastBulletPos.y
+    );
+    fprintf(this->debugFileLog,
+        "\ncalled with currentBulletPos.x=%f and currentBulletPos.y=%f",
+        currentBulletPos.x, currentBulletPos.y
+    );
+    fprintf(this->debugFileLog,
+        "\n result of func = %d", result
+    );
+    #endif
+
+    return result;
 }
 
 // NOTE(Noah): I am quite sure that this bullet class is VERY inneficient.
@@ -66,42 +106,16 @@ void Bullets::update(Game *game) {
                 The line of the bullet might collide with multiple sides of the platform.
                 The point of collision that we want is going to be the point that is closest to the bullet origin.
                 */
-                Vector2 closestCollisionPoint = lastBulletPos;
-
-                // points on rectangle, maybe we can factor this out.
-                Ground *ground = (Ground *)grounds[j];
-                Vector2 topLeft = (Vector2){ground->GetPos().x, ground->GetPos().y};
-                Vector2 topRight = (Vector2){ground->GetPos().x + ground->getWidth(), ground->GetPos().y};
-                Vector2 bottomLeft = (Vector2){ground->GetPos().x, ground->GetPos().y + ground->getHeight()};
-                Vector2 bottomRight = (Vector2){ground->GetPos().x + ground->getWidth(), ground->GetPos().y + ground->getHeight()};
-
-                // TODO(Noah): This can likely be factored out.
-                // check top of rectangle.
-                Vector2 sides[4][2] = {
-                    {topLeft, topRight},
-                    {bottomLeft, bottomRight},
-                    {topLeft, bottomLeft},
-                    {topRight, bottomRight}
-                };
-
-                Vector2 currentColPos;
-                bool result = false;
-                for (unsigned int k = 0; k < 4; k++) {
-                    Vector2 sideStart = sides[k][0];
-                    Vector2 sideEnd = sides[k][1];
-                    bool intermediateResult = CheckCollisionLines(sideStart, sideEnd, this->bullets[i], lastBulletPos, &currentColPos);
-                    if (intermediateResult) {
-                        //std::cout << "We have a collision!!!" << std::endl;
-                        result = intermediateResult;
-                        if ( Vector2Distance(this->origin,currentColPos) <= Vector2Distance(this->origin,closestCollisionPoint) ) 
-                            closestCollisionPoint = currentColPos;
-                    }
-                }
                 
+                Ground *ground = (Ground *)grounds[j];
+                Rectangle groundRect = (Rectangle){ground->GetPos().x, ground->GetPos().y, ground->getWidth(), ground->getHeight()};
+                Vector2 collisionPoint;
+                bool result = this->CheckCollisionWithRectangle(groundRect, lastBulletPos, this->bullets[i], &collisionPoint);    
+
                 if (result) {
                     // the bullet has collied with something!
                     hitInfo.entityHit = ground;
-                    hitInfo.hitPos = closestCollisionPoint;
+                    hitInfo.hitPos = collisionPoint;
                     bullet_index = i;
                     break; 
                     // NOTE/TODO(Noah): no more grounds to check (of course, it might be the case that there is a ground that is very close to another one).
