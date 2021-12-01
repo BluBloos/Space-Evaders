@@ -10,6 +10,7 @@ Player::Player(Vector2 v, int layer) : Character(v, layer){
     this->inAir = true;
     this->runFlag = true;
     this->flipMultiplier = 1;
+    this->score = 0;
 
     // Initialize Animator
     this->InitializeAnimations();                                                             
@@ -94,17 +95,9 @@ void Player::update(Game *game){
 		}
 
 
-        // TODO: Check if the player is touching the sides of the screen.
-        if (this->pos.x < 0) {
-            this->pos.x = 0; // Snap the player.
-        }
-        if (this->pos.x > 3950) {
-            // TODO: Change 850 from a constant to something that is dependent on a variable screen size.
-            this->pos.x = 3950;
-        }
         // TODO: Check if player is touching top or bottom of the screen, in which case, send them back to spawn (?).
 
-        if (this->pos.y <= 0){ //player has fell off the world -> kill them
+        if (this->pos.y >= 1000){ //player has fell off the world -> kill them
             this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, true);
             // game->switchGameOver();
             this->game = game;
@@ -366,4 +359,7 @@ void Player::SetConditions(){
     this->myAnimator->SetBoolCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH);
     this->myAnimator->SetTriggerCondition(PLAYER_ANIMATIONCONDITION_TRIGGER_JUMP);
 }
+
+int Player::getScore() { return this->score; }
+void Player::setScore(int newScore) { this->score = newScore; }
 #pragma endregion

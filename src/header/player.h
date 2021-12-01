@@ -16,6 +16,9 @@ class Player : public Character{
 
         constexpr static const float blackHoleCoeff = 20.0f;
 
+        int getScore();
+        void setScore(int newScore);
+
     private:
         // attr
         Game* game;
@@ -25,6 +28,7 @@ class Player : public Character{
         bool inAir;
         bool runFlag;
         int flipMultiplier;
+        int score;
         
         // The run function for the player updates the horizontal movement of the player based on frame deltaTime
         // and the direction of running.
