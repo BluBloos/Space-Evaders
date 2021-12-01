@@ -71,7 +71,7 @@ void Player::update(Game *game){
                 this->currentVerticalSpeed = 0.0f;
                 //this->pos.y = ground->GetPos().y - this->animations.at(PLAYER_ANIMATIONSTART_NAME).sprite.height; // snap the y position of the player.
                 this->pos.y = ground->GetPos().y;
-                this->pos.x += ground->GetCurrentOscillationX();
+                this->pos.x += deltaTime * ground->GetCurrentOscillationX();
                 this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND, true);
                 break;
             } else {

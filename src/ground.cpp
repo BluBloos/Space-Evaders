@@ -53,7 +53,7 @@ void Ground::SetMovable(bool isMovable, float dirx, float diry, float osx, float
 };
 
 float Ground::GetCurrentOscillationX(){
-	return this->oscx;
+	return this->dirx * this->oscillationX;
 }
 
 
@@ -93,7 +93,6 @@ void Ground::update(Game *game){
         // Modify the position
         {
             this->pos.x += deltaTime * this->oscillationX * this->dirx;
-            this->oscx = deltaTime * this->oscillationX * this->dirx;
             this->pos.y += deltaTime * this->oscillationY * this->diry;
         }
     }

@@ -31,7 +31,6 @@ class Ground : public RenderableEntity{
         float GetCurrentOscillationY();
 
     private:
-        float oscx = 0;
         bool movable = false;
         int counter = 0;
         float dirx;
