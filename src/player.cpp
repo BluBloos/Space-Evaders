@@ -32,7 +32,6 @@ void Player::update(Game *game){
             if (IsKeyDown(KEY_A)) {dir = -1.0f;}
             if (IsKeyDown(KEY_D)) {dir = 1.0f;}
         }
-
         else {
             if (IsKeyDown(KEY_LEFT)) {dir = -1.0f;}
             if (IsKeyDown(KEY_RIGHT)) {dir = 1.0f;}
@@ -72,6 +71,7 @@ void Player::update(Game *game){
                 this->currentVerticalSpeed = 0.0f;
                 //this->pos.y = ground->GetPos().y - this->animations.at(PLAYER_ANIMATIONSTART_NAME).sprite.height; // snap the y position of the player.
                 this->pos.y = ground->GetPos().y;
+                this->pos.x += deltaTime * ground->GetCurrentOscillationX();
                 this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND, true);
                 break;
             } else {
@@ -94,10 +94,8 @@ void Player::update(Game *game){
 			}
 		}
 
-
         // TODO: Check if player is touching top or bottom of the screen, in which case, send them back to spawn (?).
-
-        if (this->pos.y >= 1000){ //player has fell off the world -> kill them
+        if (this->pos.y >= 750){ //player has fell off the world -> kill them
             this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, true);
             // game->switchGameOver();
             this->game = game;
@@ -126,12 +124,15 @@ void Player::update(Game *game){
     }
 
     // Update the vertical movement of the player, note the flip multiplier.
-    if (this->inAir) {
-        this->pos.y += this->currentVerticalSpeed * deltaTime * flipMultiplier;
-        this->currentVerticalSpeed += Entity::gravity * deltaTime;
+    if (this->runFlag) {
+        if (this->inAir) {
+            this->pos.y += this->currentVerticalSpeed * deltaTime * flipMultiplier;
+            this->currentVerticalSpeed += Entity::gravity * deltaTime;
+        }
     }
 
     // Gravity function of the player
+    /*
     if (IsKeyDown(KEY_G)) {
         // Activate the black hole and move all platforms to the player.
         std::vector<Entity *> grounds = game->GetGrounds();
@@ -155,6 +156,7 @@ void Player::update(Game *game){
             }
         }
     }
+    */
 
     this->myAnimator->PlayAnimation();
 }

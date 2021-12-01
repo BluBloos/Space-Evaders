@@ -3,6 +3,7 @@
 
 #include "entity.h"
 #include "star.h"
+#include "particles.h"
 #include <vector>
 #include "oxygenTank.h"
 #include "coin.h"
@@ -17,9 +18,9 @@ class Game {
         // Function for game to implement and is to be called for each frame
         // to be rendered.    
         void GameUpdateAndRender();
-
         std::vector<Entity *> GetGrounds(); // Will return all the ground entities
         std::vector<Entity *> GetCharacters(); // Will return all the ground entities
+
         float GetLastFrameTime();
         void showSettings();
         void setSettingsFlag();
@@ -29,6 +30,7 @@ class Game {
         bool onTitle;
         Texture2D titleSprite;
         Texture2D moonTexture;
+        Texture2D enemyTexture;
         // void showTitle(Texture2D sprite);
         void showTitle();
 
@@ -37,6 +39,8 @@ class Game {
         void showGameOver();
         void showGameComplete();
 
+        // just debug things hehe
+        Bullets *debugBulletObject;
         void tankRefill();
         int getO2();
         int timeCount;

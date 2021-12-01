@@ -27,6 +27,8 @@ class Ground : public RenderableEntity{
         constexpr static const float airFriction = 10.0f; // friction formula being used is airFriction * v, giving a force.
         float getWidth();
         float getHeight();
+        float GetCurrentOscillationX();
+        float GetCurrentOscillationY();
 
     private:
         bool movable = false;

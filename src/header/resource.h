@@ -11,6 +11,7 @@
 // Because origin of the image is at upper-left corner, the offset value of cameras should be corrected.
 #define OFFSETCORRECTVALUE 100.0f
 // Animation file path and animation name
+//#define DEBUG
 #define PLAYER_ANIMATIONSTART_PATH "../arts/player_stand-halfSize.png"
 #define PLAYER_ANIMATIONSTART_NAME "Stand"
 #define PLAYER_ANIMATION_WALK_PATH "../arts/player_run_halfSize.png"
