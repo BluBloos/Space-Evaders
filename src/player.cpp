@@ -9,6 +9,7 @@ Player::Player(Vector2 v, int layer) : Character(v, layer){
     this->currentVerticalSpeed = 0.0;
     this->inAir = true;
     this->flipMultiplier = 1;
+    this->score = 0;
 
     // Initialize Animator
     this->InitializeAnimations();                                                                     // Animator Example
@@ -228,4 +229,7 @@ void Player::SetConditions(){
         TraceLog(LOG_ERROR, "Error: Animator has not been initialized!");
     }
 }
+
+int Player::getScore() { return this->score; }
+void Player::setScore(int newScore) { this->score = newScore; }
 #pragma endregion

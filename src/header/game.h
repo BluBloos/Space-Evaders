@@ -4,6 +4,7 @@
 #include "entity.h"
 #include "star.h"
 #include <vector>
+#include "coin.h"
 
 class Game {
     
@@ -36,13 +37,14 @@ class Game {
     private:
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
+        std::vector<coin> coins;
         Star stars[200];
         bool gameOver;
         bool settingsFlag;
         bool controlFlag;
         Camera2D camera;
         void updateCameraSmoothFollowInsideMap(float);
-        
+        int score;
 };
 
 #endif

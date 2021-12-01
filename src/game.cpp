@@ -8,6 +8,7 @@
 #include "resource.h"
 #include "star.cpp"
 #include <iostream>
+#include "coin.cpp"
 
 #define PLAYER_SPAWN (Vector2){0.0f, 400.0f}
 #define PLAYER_CHARACTER_INDEX 0
@@ -90,7 +91,10 @@ Game::Game() {
 
 
 
-    // this->titleSprite = LoadTexture("./resources/evaderSprite.png");
+    this->coins.push_back(coin(400, 30));
+    this->coins.push_back(coin(700, 30));
+    this->coins.push_back(coin(700, 200));
+
     this->onTitle = true;
     this->controlFlag = true; // control flag to swap between WASD and arrow keys
     this->settingsFlag = false; // settings flag to display settings
@@ -101,6 +105,7 @@ Game::Game() {
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
+    score = 0;
     this->moonTexture = LoadTexture("arts/moon.png");
 }
 
@@ -158,7 +163,11 @@ void Game::GameUpdateAndRender() {
 
         if (gameOver){
             showGameOver();
-            if (IsKeyPressed(KEY_ENTER)) { switchGameOver(); }
+            if (IsKeyPressed(KEY_ENTER)) { switchGameOver();
+            score = 0;
+            for (int i = 0; i < coins.size(); i++) { // put all coins back
+                coins[i].setCollected(false);
+            }}
         }
         else {
 
@@ -182,6 +191,20 @@ void Game::GameUpdateAndRender() {
                     entity->update(this);
                 }
 
+                Vector2 coords = characters[0]->GetPos();
+                for (unsigned int i = 0; i < this->coins.size(); i++) { // loop through coins and show
+                    coins[i].showCoin();
+                    if ((coords.x >= (coins[i].getX() - 25)) && (coords.x <= (coins[i].getX() + 25)) && (coords.y >= (coins[i].getY() - 15)) && (coords.y <= (coins[i].getY() + 35))){
+                        if (!coins[i].getCollected()) {score = score + 10; }
+                        // if player touches coin, set coin to collected
+                        coins[i].isCollected();
+
+                    }
+                }
+
+                std::cout << "x: " << coords.x << " y: " << coords.y << std::endl;
+                //if (coords.x < )
+                DrawText(FormatText("Score: %i", score), camera.target.x - 410, camera.target.y - 295, 30, RAYWHITE);
                 EndMode2D();
             }
         }
@@ -246,6 +269,7 @@ Game::~Game() {
 void Game::showGameOver() {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), RED);
     DrawText("Game Over", GetScreenWidth()*0.225, GetScreenHeight()*0.3, 100, RAYWHITE);
+    DrawText(FormatText("Final Score: %i", score), GetScreenWidth()*0.225, GetScreenHeight()*0.5, 40, RAYWHITE);
     DrawText("Press Enter to Respawn", GetScreenWidth()*0.225, GetScreenHeight()*0.6, 40, RAYWHITE);
 }
 
@@ -265,7 +289,6 @@ void Game::showTitle() {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
     DrawText("Space Evaders", GetScreenWidth()*0.1, GetScreenHeight()*0.3, 95, RAYWHITE);
     DrawText("Press Enter to Start", GetScreenWidth()*0.2, GetScreenHeight()*0.8, 50, RAYWHITE);
-    // DrawTexture(this->titleSprite, GetScreenWidth()*0.25, GetScreenHeight()*0.7, RAYWHITE);
 }
 void Game::showSettings() {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
