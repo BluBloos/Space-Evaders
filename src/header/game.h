@@ -4,6 +4,7 @@
 #include "entity.h"
 #include "star.h"
 #include <vector>
+#include "oxygenTank.h"
 
 class Game {
     
@@ -33,16 +34,21 @@ class Game {
         void switchGameOver();
         void showGameOver();
 
+        void tankRefill();
+        int getO2();
+        int timeCount;
+
     private:
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
+        std::vector<tank> tanks;
         Star stars[200];
         bool gameOver;
         bool settingsFlag;
         bool controlFlag;
         Camera2D camera;
         void updateCameraSmoothFollowInsideMap(float);
-        
+        int oxygenRemaining;
 };
 
 #endif

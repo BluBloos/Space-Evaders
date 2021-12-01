@@ -7,6 +7,7 @@
 #include "game.h"
 #include "resource.h"
 #include "star.cpp"
+#include "oxygenTank.cpp"
 #include <iostream>
 
 #define PLAYER_SPAWN (Vector2){0.0f, 400.0f}
@@ -37,8 +38,10 @@ Game::Game() {
     camera.offset = (Vector2){ SCREENWIDTH/2.0f, SCREENHEIGHT/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
+    this->timeCount = 0;
+    this->oxygenRemaining = 100;
 
-    this->moonTexture = LoadTexture("arts/moon.png");
+    this->moonTexture = LoadTexture("../arts/moon.png");
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -55,6 +58,10 @@ float Game::GetLastFrameTime() {
 
 // Define what will happen each frame of the game.
 void Game::GameUpdateAndRender() {
+    if ((GetTime() - timeCount) > 1){
+        timeCount = GetTime();
+        oxygenRemaining--;
+    }
 
 	for (int i = 0; i < 200; i++) {
 		this->stars[i].x -= 12 * (stars[i].z / 1);
@@ -118,6 +125,8 @@ void Game::GameUpdateAndRender() {
                     Entity *entity = this->characters[i];
                     entity->update(this);
                 }
+
+                DrawText(FormatText("Oxygen Remaining: %i", this->getO2()), camera.target.x + 105, camera.target.y - 295, 30, RAYWHITE);
 
                 EndMode2D();
             }
@@ -233,3 +242,8 @@ void Game::setControlFlag() {
 }
 
 bool Game::getControlFlag() { return this->controlFlag; }
+
+int Game::getO2() { return oxygenRemaining; }
+void Game::tankRefill() {
+    this->oxygenRemaining = this->oxygenRemaining + 50;
+}
