@@ -99,8 +99,6 @@ Game::Game() {
 	this->grounds.push_back((Entity *)plat19);
 	this->grounds.push_back((Entity *)plat20);
 
-
-
     this->coins.push_back(coin(400, 30));
     this->coins.push_back(coin(700, 30));
     this->coins.push_back(coin(700, 200));
@@ -147,6 +145,7 @@ Game::Game() {
 
     this->moonTexture = LoadTexture("../arts/moon.png");
     this->enemyTexture = LoadTexture("../arts/enemy.png");
+
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -254,6 +253,7 @@ void Game::GameUpdateAndRender() {
 
                 if (this->oxygenRemaining < 1){
                     this->switchGameOver();
+                    this->isOxygenDeath();
                 }
 
                 for (unsigned int i = 0; i < this->coins.size(); i++) { // loop through coins and show
@@ -267,7 +267,7 @@ void Game::GameUpdateAndRender() {
                 }
 
                 std::cout << "x: " << coords.x << " y: " << coords.y << std::endl;
-                //if (coords.x < )
+
                 DrawText(FormatText("Score: %i", score), camera.target.x - 410, camera.target.y - 295, 30, RAYWHITE);
                 EndMode2D();
             }
@@ -336,11 +336,12 @@ Game::~Game() {
 void Game::showGameOver() {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), RED);
     DrawText("Game Over", GetScreenWidth()*0.225, GetScreenHeight()*0.3, 100, RAYWHITE);
-    DrawText(FormatText("Final Score: %i", score), GetScreenWidth()*0.225, GetScreenHeight()*0.5, 40, RAYWHITE);
-    DrawText("Press Enter to Respawn", GetScreenWidth()*0.225, GetScreenHeight()*0.6, 40, RAYWHITE);
+    if (oxygenDeath) {DrawText("You ran out of oxygen!", GetScreenWidth()*0.225, GetScreenHeight()*0.5, 40, RAYWHITE); }
+    DrawText(FormatText("Final Score: %i", score), GetScreenWidth()*0.225, GetScreenHeight()*0.6, 40, RAYWHITE);
+    DrawText("Press Enter to Respawn", GetScreenWidth()*0.225, GetScreenHeight()*0.7, 40, RAYWHITE);
 }
 
-void Game::switchGameOver() { 
+void Game::switchGameOver() {
     
     if (this->gameOver == false) {
         // we are going from not gameover to a gameover state.
@@ -356,6 +357,7 @@ void Game::switchGameOver() {
         }
         // reset camera pos
         this->camera.target = this->characters[0]->GetPos();
+        this->clearOxygenDeath();
     }
     this->gameOver = !this->gameOver;
 
@@ -383,8 +385,8 @@ void Game::showSettings() {
     }
 
     DrawText("Jump: Space or W/Up Arrow", GetScreenWidth()*0.1, GetScreenHeight()*0.6, 40, RAYWHITE);
-    DrawText("Gravity Flip: F", GetScreenWidth()*0.1, GetScreenHeight()*0.7, 40, RAYWHITE);
-    DrawText("Black Hole: G", GetScreenWidth()*0.1, GetScreenHeight()*0.8, 40, RAYWHITE);
+    //DrawText("Gravity Flip: F", GetScreenWidth()*0.1, GetScreenHeight()*0.7, 40, RAYWHITE);
+    DrawText("Black Hole: G", GetScreenWidth()*0.1, GetScreenHeight()*0.7, 40, RAYWHITE);
 }
 
 void Game::setSettingsFlag() {
@@ -404,3 +406,6 @@ void Game::tankRefill() {
     }
     else { this->oxygenRemaining = maxO2; }
 }
+
+void Game::clearOxygenDeath() { this->oxygenDeath = false; }
+void Game::isOxygenDeath() { this->oxygenDeath = true; }

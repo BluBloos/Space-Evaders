@@ -42,7 +42,9 @@ class Game {
         void tankRefill();
         int getO2();
         int timeCount;
-        const int maxO2 = 100;
+        const int maxO2 = 25;
+        void isOxygenDeath();
+        void clearOxygenDeath();
 
     private:
         std::vector<Entity *> characters;
@@ -56,6 +58,7 @@ class Game {
         Camera2D camera;
         void updateCameraSmoothFollowInsideMap(float);
         int oxygenRemaining;
+        bool oxygenDeath;
         int score;
 };
 

@@ -89,6 +89,7 @@ void Player::update(Game *game){
                 // Note: only after death animation finishes, it can call the switchGameOver function
 				// game->switchGameOver(); // TODO: Maybe give the player like health or something!! Good animation on death, etc.
                 this->game = game;
+                //game->setDeathReason("You were killed by an alien!");
                 this->runFlag = false;
 				break;
 			}
@@ -99,6 +100,7 @@ void Player::update(Game *game){
             this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, true);
             // game->switchGameOver();
             this->game = game;
+            //game->setDeathReason("You fell to your death!");
             this->runFlag = false;
         }
     }
