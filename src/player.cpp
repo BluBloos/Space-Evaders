@@ -84,17 +84,9 @@ void Player::update(Game *game){
 		}
 
 
-        // TODO: Check if the player is touching the sides of the screen.
-        if (this->pos.x < 0) {
-            this->pos.x = 0; // Snap the player.
-        }
-        if (this->pos.x > 3950) {
-            // TODO: Change 850 from a constant to something that is dependent on a variable screen size.
-            this->pos.x = 3950;
-        }
         // TODO: Check if player is touching top or bottom of the screen, in which case, send them back to spawn (?).
 
-        if (this->pos.y <= 0){ //player has fell off the world -> kill them
+        if (this->pos.y >= 1000){ //player has fell off the world -> kill them
             game->switchGameOver();
             }
     }
