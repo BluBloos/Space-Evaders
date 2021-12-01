@@ -1,20 +1,46 @@
 #include <iostream>
 #include <vector>
+#include "raylib_wrapped.h"
+#include "bullets.h"
 #include "player.cpp"
 #include "entity.cpp"
 #include "ground.cpp"
 #include "enemy.cpp"
+#include "bullets.cpp"
 #include "game.h"
 #include "resource.h"
 #include "star.cpp"
+#include "particles.cpp"
+
 #include <iostream>
 
-#define PLAYER_SPAWN (Vector2){0.0f, 400.0f}
+#define PLAYER_SPAWN (Vector2){0.0f, 390.0f} // Slightly above ground to be safe.
 #define PLAYER_CHARACTER_INDEX 0
+
+Game *debugGame = NULL;
+
+void DebugBulletHitCallback(bullet_hit_info info) {
+    // does nothing.
+    std::cout << "Debug bullet hit callback" << std::endl;
+    if (debugGame != NULL) {
+        if (debugGame->debugPGEN != NULL)
+            delete debugGame->debugPGEN;
+        debugGame->debugPGEN = new ParticleGenerator(
+            info.hitPos,
+            100.0f, // explosive force.
+            0.5f, // 5 seconds
+            2.0f, // particle spawn region
+            10, // particle amount
+            PURPLE
+        );
+    }
+}
 
 // Define the things that happen when the game is initialized.
 Game::Game() {
+    debugGame = this;
     std::cout << "Game has been initialized\n\n";
+    //SetRandomSeed(); // set the random seed for the random number generator (Raylib function)
     // Create game entities.
     this->characters.push_back(new Player(PLAYER_SPAWN, 0));
     Enemy *evil_enemy = new Enemy((Vector2){700.0f, 200.0f}, 0);
@@ -37,6 +63,26 @@ Game::Game() {
     camera.offset = (Vector2){ SCREENWIDTH/2.0f, SCREENHEIGHT/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
+
+    // Bullet debug testing
+    this->debugBulletObject = new Bullets();
+    this->debugBulletObject->SetActive(
+        (Vector2){ 900.0f, 250.0f },
+        (Vector2){400.0f, 250.0f},
+        30.0f,
+        500.0f, // pixels/second
+        DebugBulletHitCallback
+    );
+
+    // Debug particle generator
+    this->debugPGEN = new ParticleGenerator(
+        (Vector2){200.0f, 200.0f},
+        100.0f, // explosive force.
+        0.5f, // 5 seconds
+        2.0f, // particle spawn region
+        10, // particle amount
+        PURPLE
+    );
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -117,6 +163,12 @@ void Game::GameUpdateAndRender() {
                     entity->update(this);
                 }
 
+                // update debug bullets
+                this->debugBulletObject->Shoot(); // create 60 bullets / second.
+                this->debugBulletObject->update(this); 
+
+                this->debugPGEN->update(this);
+
                 EndMode2D();
             }
         }
@@ -171,6 +223,9 @@ Game::~Game() {
         Entity *entity = this->grounds[i];
         delete entity;
     }
+
+    delete this->debugBulletObject;
+    delete this->debugPGEN;
 
     std::cout << "Game has been closed\n";
 }

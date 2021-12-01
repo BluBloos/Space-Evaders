@@ -3,6 +3,7 @@
 
 #include "entity.h"
 #include "star.h"
+#include "particles.h"
 #include <vector>
 
 class Game {
@@ -14,9 +15,9 @@ class Game {
         // Function for game to implement and is to be called for each frame
         // to be rendered.    
         void GameUpdateAndRender();
-
         std::vector<Entity *> GetGrounds(); // Will return all the ground entities
         std::vector<Entity *> GetCharacters(); // Will return all the ground entities
+
         float GetLastFrameTime();
         void showSettings();
         void setSettingsFlag();
@@ -32,6 +33,10 @@ class Game {
         void switchGameOver();
         void showGameOver();
 
+        // just debug things hehe
+        Bullets *debugBulletObject;
+        ParticleGenerator *debugPGEN;
+
     private:
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
@@ -41,6 +46,8 @@ class Game {
         bool controlFlag;
         Camera2D camera;
         void updateCameraSmoothFollowInsideMap(float);
+
+        
 };
 
 #endif
