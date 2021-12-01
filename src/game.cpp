@@ -41,7 +41,7 @@ Game::Game() {
     camera.zoom = 1.0f;
 
     this->timeCount = 0;
-    this->oxygenRemaining = 100;
+    this->oxygenRemaining = this->maxO2;
     this->tanks.push_back(tank(400, 30));
 
     this->moonTexture = LoadTexture("../arts/moon.png");
@@ -260,5 +260,8 @@ bool Game::getControlFlag() { return this->controlFlag; }
 
 int Game::getO2() { return oxygenRemaining; }
 void Game::tankRefill() {
-    this->oxygenRemaining = this->oxygenRemaining + 50;
+    if (this->oxygenRemaining + 50 <= maxO2){
+        this->oxygenRemaining = this->oxygenRemaining + 50;
+    }
+    else { this->oxygenRemaining = maxO2; }
 }
