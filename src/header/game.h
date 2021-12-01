@@ -44,7 +44,7 @@ class Game {
         void tankRefill();
         int getO2();
         int timeCount;
-        const int maxO2 = 100;
+        const int maxO2 = 25;
 
     private:
         std::vector<Entity *> characters;
