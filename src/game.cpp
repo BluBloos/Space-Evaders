@@ -100,6 +100,7 @@ void Game::GameUpdateAndRender() {
         if (gameOver){
             showGameOver();
             if (IsKeyPressed(KEY_ENTER)) { switchGameOver();
+            score = 0;
             for (int i = 0; i < coins.size(); i++) { // put all coins back
                 coins[i].setCollected(false);
             }}
@@ -201,6 +202,7 @@ Game::~Game() {
 void Game::showGameOver() {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), RED);
     DrawText("Game Over", GetScreenWidth()*0.225, GetScreenHeight()*0.3, 100, RAYWHITE);
+    DrawText(FormatText("Final Score: %i", score), GetScreenWidth()*0.225, GetScreenHeight()*0.5, 40, RAYWHITE);
     DrawText("Press Enter to Respawn", GetScreenWidth()*0.225, GetScreenHeight()*0.6, 40, RAYWHITE);
 }
 
@@ -220,7 +222,6 @@ void Game::showTitle() {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
     DrawText("Space Evaders", GetScreenWidth()*0.1, GetScreenHeight()*0.3, 95, RAYWHITE);
     DrawText("Press Enter to Start", GetScreenWidth()*0.2, GetScreenHeight()*0.8, 50, RAYWHITE);
-    // DrawTexture(this->titleSprite, GetScreenWidth()*0.25, GetScreenHeight()*0.7, RAYWHITE);
 }
 void Game::showSettings() {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
