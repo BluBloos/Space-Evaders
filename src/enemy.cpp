@@ -1,6 +1,9 @@
 #include "header/enemy.h"
 #include "character.cpp"
 
+#define ENEMY_WIDTH 77
+#define ENEMY_HEIGHT 61
+
 Enemy::Enemy() : Character () {
     this->collisionLayer = 0;
     this->oscillationX = 0;
@@ -56,10 +59,10 @@ void Enemy::update(Game *game){
 
     if (this->dirx < 0.0f) {
         // Going left
-        DrawTextureRec(game->enemyTexture, (Rectangle){ 0, 0, 77, 61 }, this->pos, RAYWHITE);
+        DrawTextureRec(game->enemyTexture, (Rectangle){ 0, 0, ENEMY_WIDTH, ENEMY_HEIGHT }, this->pos, RAYWHITE);
     } else {
         // Going right
-        DrawTextureRec(game->enemyTexture, (Rectangle){ 77, 0, 77, 61 }, this->pos, RAYWHITE);
+        DrawTextureRec(game->enemyTexture, (Rectangle){ ENEMY_WIDTH, 0, ENEMY_WIDTH, ENEMY_HEIGHT }, this->pos, RAYWHITE);
     }
 
 	//DrawCircle(this->pos.x, this->pos.y, 25.0f, RED);
@@ -83,6 +86,5 @@ void Enemy::SetMovable(bool isMovable, float dirx, float diry, float osx, float 
 bool Enemy::EnemyCollide(Entity *target){
     // TODO: Change collision code to raylib function involving two hitboxes
     Player *player = (Player *)target;
-    return (this->collisionLayer == player->GetLayer()) &&
-			sqrt(pow(this->pos.x - (player->GetPos().x + 10), 2) + pow(this->pos.y - (player->GetPos().y - 26), 2) * 1.0) <= 25;
+    return this->collisionLayer == player->GetLayer() && CheckCollisionRecs( player->GetCollisionBounds(), (Rectangle){ this->pos.x, this->pos.y, ENEMY_WIDTH, ENEMY_HEIGHT } ) ;
 }
