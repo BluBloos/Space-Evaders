@@ -314,6 +314,8 @@ void Game::switchGameOver() {
         for (int i = 0; i < coins.size(); i++) { // put all coins back
             coins[i].setCollected(false);
         }
+        // reset camera pos
+        this->camera.target = this->characters[0]->GetPos();
     }
     this->gameOver = !this->gameOver;
 
