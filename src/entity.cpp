@@ -36,9 +36,7 @@ void RenderableEntity::update(Game *game){}
 void RenderableEntity::InitializeAnimations(){}
 void RenderableEntity::SetConditions(){}
 void RenderableEntity::SetTransitions(){}
-std::unordered_map<std::string, Animation>* RenderableEntity::GetAnimations(){
-    return &(this->animations);
-}
+void RenderableEntity::OnEndState(){}
 
 RenderableEntity::~RenderableEntity(){
     if (!this->animations.empty()) {

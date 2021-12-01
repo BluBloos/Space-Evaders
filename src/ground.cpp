@@ -87,10 +87,8 @@ void Ground::update(Game *game){
     }
 
     Rectangle groundRectangle = (Rectangle){this->pos.x, this->pos.y, (float)this->width, (float)this->height};
-    // DrawRectangleRec(groundRectangle, RED);
-
-    // Draw part of a texture (defined by a rectangle) with rotation and scale tiled into dest.
-    DrawTextureTiled(game->moonTexture, (Rectangle){0.0f, 0.0f, 16.0f, 16.0f}, groundRectangle, Vector2Zero(), 0.0f, 2.5f, RAYWHITE);  
+    DrawTextureTiled(game->moonTexture, (Rectangle){0.0f, 0.0f, 16.0f, 16.0f}, groundRectangle, Vector2Zero(), 0.0f, 2.5f, RAYWHITE);
+    //DrawRectangleRec(Rectangle{this->pos.x, this->pos.y, (float)this->width, (float)this->height}, RED);
 }
 
 bool Ground::TouchGround(Player *target, float deltaTime){
