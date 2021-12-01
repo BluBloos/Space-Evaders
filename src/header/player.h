@@ -18,18 +18,20 @@ class Player : public Character{
 Rectangle GetCollisionBounds();
         int getScore();
         void setScore(int newScore);
+        float dir;
+        float currentVerticalSpeed;
 
     private:
         // attr
         Game* game;
-        float currentVerticalSpeed;
+        
         const float horSpeed = 600.0f;
         const float verSpeed = 310.0f;
         bool inAir;
         bool runFlag;
         int flipMultiplier;
         int score;
-        float dir;
+        
         Rectangle _collisionBounds;
         
         

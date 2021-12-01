@@ -76,19 +76,19 @@ void Player::update(Game *game){
         std::vector<Entity *> grounds = game->GetGrounds();
         for (unsigned int i = 0; i < grounds.size(); i++) { 
             Ground *ground = (Ground *)grounds[i];  
-            
-            Vector2 newPlayerPos;
+            Vector2 newPlayerPos = this->pos;
             if (ground->TouchGround(this, deltaTime, &newPlayerPos) && this->currentVerticalSpeed >= 0){
                 this->pos = newPlayerPos;
                 // The player has collided with the ground. Stop movement.
                 this->inAir = false;
                 this->currentVerticalSpeed = 0.0f;
                 //this->pos.y = ground->GetPos().y - this->animations.at(PLAYER_ANIMATIONSTART_NAME).sprite.height; // snap the y position of the player.
-                //this->pos.y = ground->GetPos().y;
+                this->pos.y = ground->GetPos().y + 0.01f + deltaTime * ground->GetCurrentOscillationY();
                 this->pos.x += deltaTime * ground->GetCurrentOscillationX();
                 this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND, true);
                 break;
             } else {
+                this->pos = newPlayerPos;
                 this->inAir = true;
                 this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND, false);
             }

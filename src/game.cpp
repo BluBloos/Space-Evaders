@@ -254,8 +254,8 @@ void Game::GameUpdateAndRender() {
                 }
 
                 // update debug bullets
-                this->debugBulletObject->Shoot(); // create 60 bullets / second.
-                this->debugBulletObject->update(this); 
+                //this->debugBulletObject->Shoot(); // create 60 bullets / second.
+                //this->debugBulletObject->update(this); 
 
                 // Tank collision.
                 Player *playerMans = (Player *)characters[0];
@@ -407,6 +407,7 @@ void Game::switchGameOver() {
         // we are going from not gameover to a gameover state.
         // thus, we reset the position of the player!
         this->characters[PLAYER_CHARACTER_INDEX]->SetPos(PLAYER_SPAWN);
+        ((Player *)this->characters[PLAYER_CHARACTER_INDEX])->currentVerticalSpeed = 0.0f;
         oxygenRemaining = maxO2;
         for (int i = 0; i < tanks.size(); i++) { // put all coins back
             tanks[i].setCollected(false);

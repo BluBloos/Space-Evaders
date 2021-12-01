@@ -126,12 +126,16 @@ void Ground::update(Game *game){
 // also I just had a revelation. Even in times of like, massive brain fart, we as humans are still coherent at language. Programming
 // is literally just a language. So it's no wonder I can do this thing for such long hours...and still be proficient...
 
+// issue is clipping due to high acceleration.
+
 bool Ground::TouchGround(Player *target, float deltaTime, Vector2 *newPlayerPos){
     // TODO: Once again, account for the fact that we want variable sized grounds.
     Player *player = (Player *)target;
     Vector2 currentPlayerPos = player->GetPos();
-    Rectangle playerColBounds = player->GetCollisionBound();
-    Rectangle groundRec = (Rectangle){this->pos.x, this->pos.y, this->pos.x + this->width, this->pos.y + this->height};
+    Rectangle playerColBounds = player->GetCollisionBounds();
+    Rectangle groundRec = (Rectangle){this->pos.x, this->pos.y, (float)this->width, (float)this->height};
+    //DrawRectangleRec(playerColBounds,RED);
+    //DrawRectangleRec(groundRec, GREEN);
     bool result = CheckCollisionRecs(playerColBounds, groundRec); 
     bool isOnTop = false;
 
@@ -144,16 +148,16 @@ bool Ground::TouchGround(Player *target, float deltaTime, Vector2 *newPlayerPos)
         bool rightSide = false;
         // If they have touched the bottom, the y-position of the player will be at a specific low point.
         // basically height is kind of around bottom of platform + player height. So we say withing some percentage of the player height.
-        if ( currentPlayerPos.y > this->pos.y + this->height + 0.9f * playerColBounds.height ) {
+        if ( currentPlayerPos.y < this->pos.y + this->height + playerColBounds.height ) {
             bottom = true; // GOOD
         } 
-        if ( currentPlayerPos.x + playerColBounds.width * 0.9f < this->pos.x ) {
+        if ( currentPlayerPos.x + playerColBounds.width * 0.95f < this->pos.x ) {
             leftSide = true; // GOOD
         }
-        if ( currentPlayerPos.x > this->pos.x + this->width - 0.1f * playerColBounds.width ) {
+        if ( currentPlayerPos.x > this->pos.x + this->width - 0.05f * playerColBounds.width ) {
             rightSide = true;
         }
-        if ( currentPlayerPos.y < this.pos.y + 0.1 * playerColBounds.height ) {
+        if ( currentPlayerPos.y < this->pos.y + this->height ) {
             top = true;
         }
 
@@ -171,15 +175,16 @@ bool Ground::TouchGround(Player *target, float deltaTime, Vector2 *newPlayerPos)
 
             return true;
 
-        } else if (leftSide) {
+        } 
+        if (leftSide) {
             newPlayerPos->x = this->pos.x - playerColBounds.width;
-            return false;
-        } else if (rightSide) {
+        } 
+        if (rightSide) {
             newPlayerPos->x = this->pos.x + this->width;
-            return false;
-        } else if (bottom) {
+        }
+        else if (bottom ) {
             newPlayerPos->y = this->pos.y + this->height + playerColBounds.height;
-            return false; // snap position, but player still in air.
+            player->currentVerticalSpeed = 0.0f;
         }
 
     } else {
