@@ -114,6 +114,7 @@ Game::Game() {
     camera.offset = (Vector2){ SCREENWIDTH/2.0f, SCREENHEIGHT/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
+    this->playerCameraLatentSpace = this->camera.target;
 
     // Bullet debug testing
     this->debugBulletObject = new Bullets();
@@ -281,18 +282,33 @@ void Game::GameUpdateAndRender() {
 // NOTE(Noah): Camera speed must be exactly player speed to avoid buggy behaviour.
 // Overall this type of camera moement feels nice!!!!
 void Game::updateCameraSmoothFollowInsideMap(float delta){
-    float minSpeed = 600.0f;
-    float minEffectLength = 5.0f;
-    float fractionSpeed = 0.8f;
-
+    
     Vector2 playerPos = this->characters[0]->GetPos();
-    //this->camera.offset = (Vector2){ SCREENWIDTH/2.0f - OFFSETCORRECTVALUE, SCREENHEIGHT/2.0f };
-    Vector2 diff = Vector2Subtract(playerPos, this->camera.target);
-
     float fringeLenX = 400.0f;
     float fringeLenY = 400.0f;
     bool playerOnFringeX = abs(this->camera.target.x - playerPos.x) > SCREENWIDTH/2.0f - fringeLenX;
     bool playerOnFringeY = abs(this->camera.target.y - playerPos.y) > SCREENHEIGHT/2.0f - fringeLenY;
+
+    // Update the Lerp position.
+    if (playerOnFringeX) {
+        this->playerCameraLatentSpace.x = playerPos.x;
+    }
+    if (playerOnFringeY) {
+        this->playerCameraLatentSpace.y = playerPos.y;
+    }
+    
+    // delta is seconds / frame.
+    // 16ms / frame -> 0.016
+
+    float distance = Vector2Distance(this->camera.target, this->playerCameraLatentSpace);
+    this->camera.target = Vector2Lerp(this->camera.target, this->playerCameraLatentSpace, delta*3);
+
+    /*float minSpeed = 600.0f;
+    float minEffectLength = 5.0f;
+    float fractionSpeed = 0.8f;
+   
+    //this->camera.offset = (Vector2){ SCREENWIDTH/2.0f - OFFSETCORRECTVALUE, SCREENHEIGHT/2.0f };
+    Vector2 diff = Vector2Subtract(playerPos, this->camera.target);
 
     // adjust the diff accordingly, to only move in specific dir.
     if (playerOnFringeX && !playerOnFringeY) {
@@ -309,6 +325,7 @@ void Game::updateCameraSmoothFollowInsideMap(float delta){
         float speed = fmaxf(fractionSpeed*length, minSpeed);
         this->camera.target = Vector2Add(this->camera.target, Vector2Scale(diff, speed*delta/length));
     }
+    */
 }
 
 // Define the things that will happen when the game is closed.
