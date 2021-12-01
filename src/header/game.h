@@ -57,6 +57,7 @@ class Game {
         void updateCameraSmoothFollowInsideMap(float);
         int oxygenRemaining;
         int score;
+        Vector2 playerCameraLatentSpace;
 };
 
 #endif
