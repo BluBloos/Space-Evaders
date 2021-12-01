@@ -249,10 +249,16 @@ void Game::GameUpdateAndRender() {
                 this->debugBulletObject->Shoot(); // create 60 bullets / second.
                 this->debugBulletObject->update(this); 
 
+                // Tank collision.
+                Player *playerMans = (Player *)characters[0];
                 Vector2 coords = characters[0]->GetPos();
+                // 30 pixel width, height of 50 px height.
+                // bottom left position.
                 for (unsigned int i = 0; i < this->tanks.size(); i++) {
                     tanks[i].showTank();
-                    if ((coords.x >= (tanks[i].getX()) - 94) && (coords.x <= (tanks[i].getX()) + 25) && (coords.y >= (tanks[i].getY()) - 50) && (coords.y <= (tanks[i].getY()) + 124)){
+                    //bool coll = (coords.x >= (tanks[i].getX()) - 94) && (coords.x <= (tanks[i].getX()) + 25) && (coords.y >= (tanks[i].getY()) - 50) && (coords.y <= (tanks[i].getY()) + 124);
+                    bool coll = CheckCollisionRecs( playerMans->GetCollisionBounds(), tanks[i].GetRecBounds() );
+                    if (coll){
                         if (!tanks[i].getCollected()) {this->tankRefill(); }
                         // if player touches a tank, set tank to collected
                         tanks[i].isCollected();
@@ -265,9 +271,15 @@ void Game::GameUpdateAndRender() {
                     this->switchGameOver();
                 }
 
+                // coin collision.
                 for (unsigned int i = 0; i < this->coins.size(); i++) { // loop through coins and show
                     coins[i].showCoin();
-                    if ((coords.x >= (coins[i].getX() - 79)) && (coords.x <= (coins[i].getX() + 15)) && (coords.y >= (coins[i].getY() - 15)) && (coords.y <= (coins[i].getY() + 79))){
+                    //bool coll = (coords.x >= (coins[i].getX() - 79)) && (coords.x <= (coins[i].getX() + 15)) && (coords.y >= (coins[i].getY() - 15)) && (coords.y <= (coins[i].getY() + 79));
+                    bool coll = CheckCollisionCircleRec((Vector2){(float)coins[i].getX(), (float)coins[i].getY()}, 15.0f, playerMans->GetCollisionBounds());                    
+                    //DrawCircle((float)coins[i].getX(), (float)coins[i].getY(), 15.0f, RED); // debug draw.
+                    //DrawRectangleRec(playerMans->GetCollisionBounds(), GREEN); // player hitbox.
+                    
+                    if (coll){
                         if (!coins[i].getCollected()) {score = score + 10; }
                         // if player touches coin, set coin to collected
                         coins[i].isCollected();

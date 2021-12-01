@@ -17,7 +17,18 @@ Player::Player(Vector2 v, int layer) : Character(v, layer){
     // Tell the animator what is the first animation to play when the game started.
     this->myAnimator = new Animator(this, &(this->animations.at(PLAYER_ANIMATIONSTART_NAME)));
     this->SetConditions();  // Must be called after animator has been initialized!            
-    this->SetTransitions();                                                                   
+    this->SetTransitions();     
+
+    // set up the collision bounds.
+    this->_collisionBounds = (Rectangle){
+        0, 0,
+        76, 105
+    };                                                              
+}
+
+Rectangle Player::GetCollisionBounds() {
+    return (Rectangle){ this->pos.x, this->pos.y - this->_collisionBounds.height, 
+        this->_collisionBounds.width, this->_collisionBounds.height };
 }
 
 void Player::update(Game *game){ 

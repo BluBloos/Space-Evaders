@@ -15,7 +15,7 @@ class Player : public Character{
         float GetCurrentVerticalSpeed();
 
         constexpr static const float blackHoleCoeff = 20.0f;
-
+Rectangle GetCollisionBounds();
         int getScore();
         void setScore(int newScore);
 
@@ -29,6 +29,8 @@ class Player : public Character{
         bool runFlag;
         int flipMultiplier;
         int score;
+        Rectangle _collisionBounds;
+        
         
         // The run function for the player updates the horizontal movement of the player based on frame deltaTime
         // and the direction of running.
