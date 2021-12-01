@@ -10,6 +10,7 @@
 #include "oxygenTank.cpp"
 #include <iostream>
 #include "coin.cpp"
+#include "rocket.cpp"
 
 #define PLAYER_SPAWN (Vector2){0.0f, 400.0f}
 #define PLAYER_CHARACTER_INDEX 0
@@ -17,7 +18,6 @@
 // Define the things that happen when the game is initialized.
 Game::Game() {
     std::cout << "Game has been initialized\n\n";
-
     // Create game entities.
     // Create player
     this->characters.push_back(new Player(PLAYER_SPAWN, 0));
@@ -62,7 +62,7 @@ Game::Game() {
 
     Ground *plat18 = new Ground((Vector2){5500.0f, 300.0f}, 0, 200, 50);
 	Ground *plat19 = new Ground((Vector2){5900.0f, 500.0f}, 0, 200, 50);
-	Ground *plat20 = new Ground((Vector2){6300.0f, 400.0f}, 0, 200, 50);
+	Ground *plat20 = new Ground((Vector2){6300.0f, 400.0f}, 0, 400, 50);
 
 
 
@@ -112,7 +112,7 @@ Game::Game() {
     this->tanks.push_back(tank(400, 70));
     this->score = 0;
 
-    this->moonTexture = LoadTexture("arts/moon.png");
+    this->moonTexture = LoadTexture("../arts/moon.png");
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -174,9 +174,14 @@ void Game::GameUpdateAndRender() {
         }
 
         if (gameOver){
-            showGameOver();
+        	if (this->rocket->getComplete()) {
+        		showGameComplete();
+        	} else {
+        		showGameOver();
+        	}
             if (IsKeyPressed(KEY_ENTER)) {
                 switchGameOver();
+                this->rocket->setComplete(false);
             }
         }
         else {
@@ -226,6 +231,12 @@ void Game::GameUpdateAndRender() {
 
                     }
                 }
+
+                DrawRectangle(this->rocket -> getX(), this->rocket -> getY(), 10, 10, RED);
+                if ((coords.x >= (this->rocket -> getX() + 25)) && (coords.x <= (this->rocket -> getX() + 100)) && (coords.y >= (this->rocket -> getY() + 20)) && (coords.y <= (this->rocket-> getY() + 250))){
+                	this->rocket->isComplete();
+                	this->switchGameOver();
+				}
 
                 std::cout << "x: " << coords.x << " y: " << coords.y << std::endl;
                 //if (coords.x < )
@@ -296,6 +307,13 @@ void Game::showGameOver() {
     DrawText("Game Over", GetScreenWidth()*0.225, GetScreenHeight()*0.3, 100, RAYWHITE);
     DrawText(FormatText("Final Score: %i", score), GetScreenWidth()*0.225, GetScreenHeight()*0.5, 40, RAYWHITE);
     DrawText("Press Enter to Respawn", GetScreenWidth()*0.225, GetScreenHeight()*0.6, 40, RAYWHITE);
+}
+
+void Game::showGameComplete() {
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), GREEN);
+    DrawText("YOU ESCAPED!", GetScreenWidth()*0.08, GetScreenHeight()*0.3, 95, RAYWHITE);
+    DrawText(FormatText("Final Score: %i", score), GetScreenWidth()*0.08, GetScreenHeight()*0.5, 40, RAYWHITE);
+    DrawText("Press Enter to Respawn", GetScreenWidth()*0.08, GetScreenHeight()*0.6, 40, RAYWHITE);
 }
 
 void Game::switchGameOver() { 

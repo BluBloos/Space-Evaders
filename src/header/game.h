@@ -6,6 +6,7 @@
 #include <vector>
 #include "oxygenTank.h"
 #include "coin.h"
+#include "rocket.h"
 
 class Game {
     
@@ -34,6 +35,7 @@ class Game {
         bool getGameOver();
         void switchGameOver();
         void showGameOver();
+        void showGameComplete();
 
         void tankRefill();
         int getO2();
@@ -46,6 +48,7 @@ class Game {
         std::vector<tank> tanks;
         std::vector<coin> coins;
         Star stars[200];
+        Rocket *rocket = new Rocket(6375,175);
         bool gameOver;
         bool settingsFlag;
         bool controlFlag;
