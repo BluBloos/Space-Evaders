@@ -7,6 +7,10 @@
 
 struct Animation;
 
+enum ANIMATION_TYPE{
+    END=0, ANIM=1
+};
+
 enum DIRECTION{
     LEFT=0, RIGHT=1
 };
@@ -42,6 +46,8 @@ struct Transition{
 };
 
 struct Animation{
+    // Type of Animation
+    ANIMATION_TYPE animType;
     // Frames of the Animation
     Texture2D sprite;
     // To allocate which frame of the sprite is displayed
@@ -61,6 +67,8 @@ struct Animation{
     int frameRecStride;
     // the pixel offset from the left of the texture that the first sprite exists at.
     int frameLeftOffset;
+    // does the image just play once or multiple times
+    bool repeatable;
 
     // The group of animations to play 
     std::vector<Transition> transitions;

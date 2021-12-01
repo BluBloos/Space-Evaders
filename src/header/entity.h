@@ -36,8 +36,8 @@ class RenderableEntity : public Entity {
         virtual ~RenderableEntity();
     
         virtual void update(Game *);
-
-        std::unordered_map<std::string, Animation>* GetAnimations();
+        // Function called by the End-Type Animation
+        virtual void OnEndState();
 
     protected:
         Animator* myAnimator;
