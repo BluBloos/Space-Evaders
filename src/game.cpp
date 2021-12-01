@@ -91,11 +91,18 @@ Game::Game() {
 	this->grounds.push_back((Entity *)plat19);
 	this->grounds.push_back((Entity *)plat20);
 
+    this->coins.push_back(coin(80, 250));
+    this->coins.push_back(coin(1695, -20));
+    this->coins.push_back(coin(1495, 175));
+    this->coins.push_back(coin(1895, 175));
+    this->coins.push_back(coin(3500, 100));
+    this->coins.push_back(coin(4850, 150));
+    this->coins.push_back(coin(4850, 400));
+    this->coins.push_back(coin(5600, 150));
+    this->coins.push_back(coin(6400, 250));
 
-
-    this->coins.push_back(coin(400, 30));
-    this->coins.push_back(coin(700, 30));
-    this->coins.push_back(coin(700, 200));
+    this->tanks.push_back(tank(495, 30));
+    this->tanks.push_back(tank(3875, 30));
 
     this->onTitle = true;
     this->controlFlag = true; // control flag to swap between WASD and arrow keys
@@ -109,10 +116,11 @@ Game::Game() {
 
     this->timeCount = 0;
     this->oxygenRemaining = this->maxO2;
-    this->tanks.push_back(tank(400, 70));
+    //this->tanks.push_back(tank(400, 70));
+    //this->tanks.push_back()
     this->score = 0;
 
-    this->moonTexture = LoadTexture("arts/moon.png");
+    this->moonTexture = LoadTexture("../arts/moon.png");
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -177,6 +185,7 @@ void Game::GameUpdateAndRender() {
             showGameOver();
             if (IsKeyPressed(KEY_ENTER)) {
                 switchGameOver();
+                score = 0;
             }
         }
         else {
@@ -204,7 +213,7 @@ void Game::GameUpdateAndRender() {
                 Vector2 coords = characters[0]->GetPos();
                 for (unsigned int i = 0; i < this->tanks.size(); i++) {
                     tanks[i].showTank();
-                    if ((coords.x >= (tanks[i].getX() - 25)) && (coords.x <= (tanks[i].getX() + 25)) && (coords.y >= (tanks[i].getY() - 15)) && (coords.y <= (tanks[i].getY() + 35))){
+                    if ((coords.x >= (tanks[i].getX()) - 94) && (coords.x <= (tanks[i].getX()) + 25) && (coords.y >= (tanks[i].getY()) - 50) && (coords.y <= (tanks[i].getY()) + 124)){
                         if (!tanks[i].getCollected()) {this->tankRefill(); }
                         // if player touches a tank, set tank to collected
                         tanks[i].isCollected();
@@ -219,12 +228,13 @@ void Game::GameUpdateAndRender() {
 
                 for (unsigned int i = 0; i < this->coins.size(); i++) { // loop through coins and show
                     coins[i].showCoin();
-                    if ((coords.x >= (coins[i].getX() - 25)) && (coords.x <= (coins[i].getX() + 25)) && (coords.y >= (coins[i].getY() - 15)) && (coords.y <= (coins[i].getY() + 35))){
+                    if ((coords.x >= (coins[i].getX() - 79)) && (coords.x <= (coins[i].getX() + 15)) && (coords.y >= (coins[i].getY() - 15)) && (coords.y <= (coins[i].getY() + 79))){
                         if (!coins[i].getCollected()) {score = score + 10; }
                         // if player touches coin, set coin to collected
                         coins[i].isCollected();
 
                     }
+
                 }
 
                 std::cout << "x: " << coords.x << " y: " << coords.y << std::endl;
@@ -308,7 +318,6 @@ void Game::switchGameOver() {
         for (int i = 0; i < tanks.size(); i++) { // put all coins back
             tanks[i].setCollected(false);
         }
-        score = 0;
         for (int i = 0; i < coins.size(); i++) { // put all coins back
             coins[i].setCollected(false);
         }

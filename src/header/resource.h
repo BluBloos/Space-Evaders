@@ -11,13 +11,13 @@
 // Because origin of the image is at upper-left corner, the offset value of cameras should be corrected.
 #define OFFSETCORRECTVALUE 100.0f
 // Animation file path and animation name
-#define PLAYER_ANIMATIONSTART_PATH "arts/player_stand-halfSize.png"
+#define PLAYER_ANIMATIONSTART_PATH "../arts/player_stand-halfSize.png"
 #define PLAYER_ANIMATIONSTART_NAME "Stand"
-#define PLAYER_ANIMATION_WALK_PATH "arts/player_run_halfSize.png"
+#define PLAYER_ANIMATION_WALK_PATH "../arts/player_run_halfSize.png"
 #define PLAYER_ANIMATION_WALK_NAME "Run"
-#define PLAYER_ANIMATION_JUMP_PATH "arts/player_jump_halfSize.png"
+#define PLAYER_ANIMATION_JUMP_PATH "../arts/player_jump_halfSize.png"
 #define PLAYER_ANIMATION_JUMP_NAME "Jump"
-#define PLAYER_ANIMATION_DEATH_PATH "arts/player_death_halfSize.png"
+#define PLAYER_ANIMATION_DEATH_PATH "../arts/player_death_halfSize.png"
 #define PLAYER_ANIMATION_DEATH_NAME "Death"
 #define PLAYER_ANIMATION_END_NAME "End"
 // Flags used by the player
