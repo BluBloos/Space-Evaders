@@ -10,16 +10,21 @@
 #define SCREENHEIGHT 600
 // Because origin of the image is at upper-left corner, the offset value of cameras should be corrected.
 #define OFFSETCORRECTVALUE 100.0f
-// Animation file path and animation name
-#define PLAYER_ANIMATIONSTART_PATH "arts/stand.png"
-#define PLAYER_ANIMATIONSTART_NAME "Stand"
-#define PLAYER_ANIMATION_WALK_PATH "arts/walk.png"
-#define PLAYER_ANIMATION_WALK_NAME "Walk"
-// Flags used by the player
-#define PLAYER_ANIMATIONCONDITION_INT_NAME_ONE "intOne"
-#define PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE "boolOne"
-#define PLAYER_ANIMATIONCONDITION_TRIGGER_NAME_ONE "triggerOne"
 #define PI 3.141592653589793238
 //#define DEBUG
+#define PLAYER_ANIMATIONSTART_PATH "../arts/player_stand-halfSize.png"
+#define PLAYER_ANIMATIONSTART_NAME "Stand"
+#define PLAYER_ANIMATION_WALK_PATH "../arts/player_run_halfSize.png"
+#define PLAYER_ANIMATION_WALK_NAME "Run"
+#define PLAYER_ANIMATION_JUMP_PATH "../arts/player_jump_halfSize.png"
+#define PLAYER_ANIMATION_JUMP_NAME "Jump"
+#define PLAYER_ANIMATION_DEATH_PATH "../arts/player_death_halfSize.png"
+#define PLAYER_ANIMATION_DEATH_NAME "Death"
+#define PLAYER_ANIMATION_END_NAME "End"
+// Flags used by the player
+#define PLAYER_ANIMATIONCONDITION_BOOL_RUNNING "Running"
+#define PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND "TouchGround"
+#define PLAYER_ANIMATIONCONDITION_BOOL_DEATH "Death"
+#define PLAYER_ANIMATIONCONDITION_TRIGGER_JUMP "Jump"
 
 #endif

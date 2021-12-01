@@ -7,8 +7,8 @@ Enemy::Enemy() : Character () {
     this->oscillationY = 0;
     this->dirx = dirx;
     this->diry = diry; 
-    this->width = 100;
-    this->height = 100;
+    this->width = 50;
+    this->height = 50;
     this->currentVelocity = Vector2Zero();
     this->movable = false;
     this->mass = 1;
@@ -54,7 +54,15 @@ void Enemy::update(Game *game){
         }
     }
 
-	DrawCircle(this->pos.x, this->pos.y, 50.0f, RED);
+    if (this->dirx < 0.0f) {
+        // Going left
+        DrawTextureRec(game->enemyTexture, (Rectangle){ 0, 0, 77, 61 }, this->pos, RAYWHITE);
+    } else {
+        // Going right
+        DrawTextureRec(game->enemyTexture, (Rectangle){ 77, 0, 77, 61 }, this->pos, RAYWHITE);
+    }
+
+	//DrawCircle(this->pos.x, this->pos.y, 25.0f, RED);
 }
 
 void Enemy::ApplyForce(Vector2 force, float deltaTime ) {
@@ -71,9 +79,10 @@ void Enemy::SetMovable(bool isMovable, float dirx, float diry, float osx, float 
     this->oscillationY = osy;
 };
 
+// checks if center of player is in radius of enemy.
 bool Enemy::EnemyCollide(Entity *target){
     // TODO: Change collision code to raylib function involving two hitboxes
     Player *player = (Player *)target;
     return (this->collisionLayer == player->GetLayer()) &&
-			sqrt(pow(this->pos.x - player->GetPos().x, 2) + pow(this->pos.y - player->GetPos().y, 2) * 1.0) <= 100;
+			sqrt(pow(this->pos.x - (player->GetPos().x + 10), 2) + pow(this->pos.y - (player->GetPos().y - 26), 2) * 1.0) <= 25;
 }

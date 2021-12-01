@@ -5,6 +5,8 @@
 #include "star.h"
 #include "particles.h"
 #include <vector>
+#include "oxygenTank.h"
+#include "coin.h"
 
 class Game {
     
@@ -26,6 +28,8 @@ class Game {
 
         bool onTitle;
         Texture2D titleSprite;
+        Texture2D moonTexture;
+        Texture2D enemyTexture;
         // void showTitle(Texture2D sprite);
         void showTitle();
 
@@ -35,18 +39,24 @@ class Game {
 
         // just debug things hehe
         Bullets *debugBulletObject;
+        void tankRefill();
+        int getO2();
+        int timeCount;
+        const int maxO2 = 100;
 
     private:
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
+        std::vector<tank> tanks;
+        std::vector<coin> coins;
         Star stars[200];
         bool gameOver;
         bool settingsFlag;
         bool controlFlag;
         Camera2D camera;
         void updateCameraSmoothFollowInsideMap(float);
-
-        
+        int oxygenRemaining;
+        int score;
 };
 
 #endif

@@ -8,45 +8,49 @@
 Player::Player(Vector2 v, int layer) : Character(v, layer){
     this->currentVerticalSpeed = 0.0;
     this->inAir = true;
+    this->runFlag = true;
     this->flipMultiplier = 1;
+    this->score = 0;
 
     // Initialize Animator
-    this->InitializeAnimations();                                                                     // Animator Example
+    this->InitializeAnimations();                                                             
     // Tell the animator what is the first animation to play when the game started.
-    this->myAnimator = new Animator(this, &(this->animations.at(PLAYER_ANIMATIONSTART_NAME)));        // Animator Example
-    this->SetConditions();  // Must be called after animator has been initialized!                    // Animator Example
-    this->SetTransitions();                                                                           // Animator Example
+    this->myAnimator = new Animator(this, &(this->animations.at(PLAYER_ANIMATIONSTART_NAME)));
+    this->SetConditions();  // Must be called after animator has been initialized!            
+    this->SetTransitions();                                                                   
 }
 
 void Player::update(Game *game){ 
 
     float deltaTime = game->GetLastFrameTime();
 
-    // Handle the horizontal movement of player
-    float dir = 0.0f;
-    if (game->getControlFlag()) {
-        if (IsKeyDown(KEY_A)) {dir = -1.0f;}
-        if (IsKeyDown(KEY_D)) {dir = 1.0f;}
-    }
+    if (this->runFlag) {
+        
+        // Handle the horizontal movement of player
+        float dir = 0.0f;
+        if (game->getControlFlag()) {
+            if (IsKeyDown(KEY_A)) {dir = -1.0f;}
+            if (IsKeyDown(KEY_D)) {dir = 1.0f;}
+        }
+        else {
+            if (IsKeyDown(KEY_LEFT)) {dir = -1.0f;}
+            if (IsKeyDown(KEY_RIGHT)) {dir = 1.0f;}
+        }
 
-    else {
-        if (IsKeyDown(KEY_LEFT)) {dir = -1.0f;}
-        if (IsKeyDown(KEY_RIGHT)) {dir = 1.0f;}
-    }
+        if (dir == -1.0f) {
+            this->myAnimator->FlipAnimation(LEFT);
+            this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_RUNNING, true);
+        }
+        else if (dir == 1.0f) {
+            this->myAnimator->FlipAnimation(RIGHT);
+            this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_RUNNING, true); 
+        }
+        else {
+            this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_RUNNING, false);
+        }
 
-    if (dir == -1.0f) {
-        this->myAnimator->FlipAnimation(LEFT);
-        this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, true);   // Animator Example
+        this->run(deltaTime, dir); 
     }
-    else if (dir == 1.0f) {
-        this->myAnimator->FlipAnimation(RIGHT);
-        this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, true);   // Animator Example
-    }
-    else {
-        this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, false);  // Animator Example
-    }
-
-    this->run(deltaTime, dir); 
 
     
 
@@ -67,9 +71,12 @@ void Player::update(Game *game){
                 this->currentVerticalSpeed = 0.0f;
                 //this->pos.y = ground->GetPos().y - this->animations.at(PLAYER_ANIMATIONSTART_NAME).sprite.height; // snap the y position of the player.
                 this->pos.y = ground->GetPos().y;
+                this->pos.x += deltaTime * ground->GetCurrentOscillationX();
+                this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND, true);
                 break;
             } else {
                 this->inAir = true;
+                this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND, false);
             }
         }
 
@@ -78,41 +85,43 @@ void Player::update(Game *game){
 		for (unsigned int i = 1; i < enemies.size(); i++) {
 			Enemy *enemy = (Enemy *)enemies[i];
 			if (enemy->EnemyCollide(this)){
-				game->switchGameOver(); // TODO: Maybe give the player like health or something!! Good animation on death, etc.
+                this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, true);
+                // Note: only after death animation finishes, it can call the switchGameOver function
+				// game->switchGameOver(); // TODO: Maybe give the player like health or something!! Good animation on death, etc.
+                this->game = game;
+                this->runFlag = false;
 				break;
 			}
 		}
 
 
-        // TODO: Check if the player is touching the sides of the screen.
-        if (this->pos.x < 0) {
-            this->pos.x = 0; // Snap the player.
-        }
-        if (this->pos.x > 3950) {
-            // TODO: Change 850 from a constant to something that is dependent on a variable screen size.
-            this->pos.x = 3950;
-        }
         // TODO: Check if player is touching top or bottom of the screen, in which case, send them back to spawn (?).
 
-        if (this->pos.y <= 0){ //player has fell off the world -> kill them
-            game->switchGameOver();
-            }
+        if (this->pos.y >= 1000){ //player has fell off the world -> kill them
+            this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, true);
+            // game->switchGameOver();
+            this->game = game;
+            this->runFlag = false;
+        }
     }
 
     // Code for the jumping routine.
     // NOTE(Noah): Moved the jumping routine below so that we don't snap the player back to the platform right away...
     if (IsKeyDown(KEY_SPACE) && !this->inAir) {
         this->jump();
+        this->myAnimator->SetTrigger(PLAYER_ANIMATIONCONDITION_TRIGGER_JUMP);
     }
 
     if (game->getControlFlag()){
         if(IsKeyDown(KEY_W) && !this->inAir){
             this->jump();
+            this->myAnimator->SetTrigger(PLAYER_ANIMATIONCONDITION_TRIGGER_JUMP);
         }
     }
     else {
         if(IsKeyDown(KEY_UP) && !this->inAir){
             this->jump();
+            this->myAnimator->SetTrigger(PLAYER_ANIMATIONCONDITION_TRIGGER_JUMP);
         }
     }
 
@@ -167,6 +176,18 @@ void Player::gravityFlip() {
     this->flipMultiplier = this->flipMultiplier * -1; // flip the multiplier
 }
 
+void Player::OnEndState(){
+    this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, false);
+    if (this->game) {
+        this->game->switchGameOver();
+        this->runFlag = true;
+        this->game = nullptr;
+    }
+    else {
+        TraceLog(LOG_ERROR, "player.cpp Error: Game Not Initialized.");
+    }
+}
+
 #pragma region Initialize Animator Components
 void Player::InitializeAnimations(){
     /* NOTE(Noah): 
@@ -174,66 +195,171 @@ void Player::InitializeAnimations(){
         I am going to continue on this trend. We need to subsample into each animation rectangle because each sprite is 
         a much smaller width than the actual rectangle.
         And we will need to do this for both the standing and walking animations.
-    */ 
-   int STAND_PIXEL_WIDTH = 19;
-   int STAND_PIXEL_LEFT_OFFSET = 93;
-   int STAND_IMAGES = 24;
-   int WALK_PIXEL_WIDTH = 24;
-   int WALK_PIXEL_OFFSET = 95;
-    
+    */
+
     // Stand
     Texture2D temp = LoadTexture(PLAYER_ANIMATIONSTART_PATH);
-    Animation animTemp = {temp,     // Animation Frames
-                          Rectangle{(float)STAND_PIXEL_LEFT_OFFSET, 0.0f, (float)STAND_PIXEL_WIDTH, (float)temp.height}, // Size of one frame 
-                          RIGHT,    // The direction that the image faces to
-                          0,        // Which frame is the first frame of the animation
-                          0,        // Which frame starts to play at the first round. Usually same as the last one.
-                          48,       // The number of frames that one frame of the sprite can stay. So-called frame speed.
-                          24,        // The total number of frames that the sprite has.
-                          temp.width/24, // stride to step frame rectangle by 
-                          STAND_PIXEL_LEFT_OFFSET
-                          };      
-    this->animations.insert({PLAYER_ANIMATIONSTART_NAME, animTemp});
+    this->animations.insert({PLAYER_ANIMATIONSTART_NAME, {ANIM, temp, Rectangle{0.0f, 0.0f, (float)temp.width, (float)temp.height}, // Size of one frame 
+                             RIGHT,    // The direction that the image faces to
+                             0,        // Which frame is the first frame of the animation
+                             0,        // Which frame starts to play at the first round. Usually same as the last one.
+                             1,       // The number of frames that one frame of the sprite can stay. So-called frame speed.
+                             1,        // The total number of frames that the sprite has.
+                             temp.width, // stride to step frame rectangle by 
+                             0,
+                             true}});
 
     // Walk
     temp = LoadTexture(PLAYER_ANIMATION_WALK_PATH);
-    this->animations.insert({PLAYER_ANIMATION_WALK_NAME, {temp, Rectangle{(float)WALK_PIXEL_OFFSET, 0.0f, (float)WALK_PIXEL_WIDTH, (float)temp.height}, 
-        RIGHT, 
-        0, // first frame
-        0, // first frame, first round
-        120, // frame wait time (defines rate animation plays)
-        28, // frames
-        temp.width/28,
-        WALK_PIXEL_OFFSET}});
+    this->animations.insert({PLAYER_ANIMATION_WALK_NAME, {ANIM, temp, Rectangle{0.0f, 0.0f, (float)temp.width/4, (float)temp.height}, 
+                             RIGHT, 
+                             0, // first frame
+                             0, // first frame, first round
+                             15, // frame wait time (defines rate animation plays)
+                             4, // frames
+                             temp.width/4,
+                             0,
+                             true}});
+
+    // Jump
+    temp = LoadTexture(PLAYER_ANIMATION_JUMP_PATH);
+    this->animations.insert({PLAYER_ANIMATION_JUMP_NAME, {ANIM, temp, Rectangle{0.0f, 0.0f, (float)temp.width/7, (float)temp.height}, 
+                             RIGHT, 
+                             0, 
+                             0, 
+                             10,
+                             7, 
+                             temp.width/7,
+                             0,
+                             true}});
+
+    // Death
+    temp = LoadTexture(PLAYER_ANIMATION_DEATH_PATH);
+    this->animations.insert({PLAYER_ANIMATION_DEATH_NAME, {ANIM, temp, Rectangle{0.0f, 0.0f, (float)temp.width/13, (float)temp.height}, 
+                             RIGHT, 
+                             0, 
+                             0, 
+                             10,
+                             13, 
+                             temp.width/13,
+                             0,
+                             false}});
+
+    // End State
+    this->animations.insert({PLAYER_ANIMATION_END_NAME, {END}});
 }
 
 void Player::SetTransitions(){
+
+#pragma region Transitions of Run Animation
     Animator::SetTransition(
         &this->animations[PLAYER_ANIMATIONSTART_NAME],    // From this animation
         &this->animations[PLAYER_ANIMATION_WALK_NAME],    // To this animation
         std::vector<TargetCondition>{                     // under these conditions
-            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, true)
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_RUNNING, true),
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, false)
         }
     );
     Animator::SetTransition( 
         &this->animations[PLAYER_ANIMATION_WALK_NAME],  
         &this->animations[PLAYER_ANIMATIONSTART_NAME],     
         std::vector<TargetCondition>{                     
-            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE, false)
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_RUNNING, false),
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, false)
         }
     );
+#pragma endregion
+
+#pragma region Transitions of Jump Animation
+    Animator::SetTransition( 
+        &this->animations[PLAYER_ANIMATION_WALK_NAME],  
+        &this->animations[PLAYER_ANIMATION_JUMP_NAME],     
+        std::vector<TargetCondition>{                     
+            Animator::SetTriggerTargetCondition(PLAYER_ANIMATIONCONDITION_TRIGGER_JUMP),
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, false)
+        }
+    );
+    Animator::SetTransition( 
+        &this->animations[PLAYER_ANIMATIONSTART_NAME],  
+        &this->animations[PLAYER_ANIMATION_JUMP_NAME],     
+        std::vector<TargetCondition>{                     
+            Animator::SetTriggerTargetCondition(PLAYER_ANIMATIONCONDITION_TRIGGER_JUMP),
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, false)
+        }
+    );
+    Animator::SetTransition( 
+        &this->animations[PLAYER_ANIMATION_JUMP_NAME],  
+        &this->animations[PLAYER_ANIMATION_JUMP_NAME],     
+        std::vector<TargetCondition>{                     
+            Animator::SetTriggerTargetCondition(PLAYER_ANIMATIONCONDITION_TRIGGER_JUMP),
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, false)
+        }
+    );
+    Animator::SetTransition( 
+        &this->animations[PLAYER_ANIMATION_JUMP_NAME],  
+        &this->animations[PLAYER_ANIMATIONSTART_NAME],     
+        std::vector<TargetCondition>{                     
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND, true),
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_RUNNING, false),
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, false)
+        }
+    );
+    Animator::SetTransition( 
+        &this->animations[PLAYER_ANIMATION_JUMP_NAME],  
+        &this->animations[PLAYER_ANIMATION_WALK_NAME],     
+        std::vector<TargetCondition>{                     
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND, true),
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_RUNNING, true),
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, false)
+        }
+    );
+#pragma endregion
+
+#pragma region Transitions of Death Animation
+    Animator::SetTransition(   
+        &this->animations[PLAYER_ANIMATIONSTART_NAME],
+        &this->animations[PLAYER_ANIMATION_DEATH_NAME],     
+        std::vector<TargetCondition>{
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, true)
+        }
+    );
+    Animator::SetTransition(   
+        &this->animations[PLAYER_ANIMATION_JUMP_NAME],
+        &this->animations[PLAYER_ANIMATION_DEATH_NAME],     
+        std::vector<TargetCondition>{
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, true)
+        }
+    );
+    Animator::SetTransition(   
+        &this->animations[PLAYER_ANIMATION_WALK_NAME],
+        &this->animations[PLAYER_ANIMATION_DEATH_NAME],     
+        std::vector<TargetCondition>{
+            Animator::SetBoolTargetCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, true)
+        }
+    );
+    Animator::SetTransition(
+        &this->animations[PLAYER_ANIMATION_DEATH_NAME],  
+        &this->animations[PLAYER_ANIMATION_END_NAME],     
+        std::vector<TargetCondition>{}
+    );
+    Animator::SetTransition(
+        &this->animations[PLAYER_ANIMATION_END_NAME],  
+        &this->animations[PLAYER_ANIMATIONSTART_NAME],     
+        std::vector<TargetCondition>{}
+    );
+#pragma endregion
+
 }
 
 // The player has these flags to control the animation flow
 // Initialize flags
 void Player::SetConditions(){
-    if (this->myAnimator) {
-        this->myAnimator->SetIntCondition(PLAYER_ANIMATIONCONDITION_INT_NAME_ONE);
-        this->myAnimator->SetBoolCondition(PLAYER_ANIMATIONCONDITION_BOOL_NAME_ONE);
-        this->myAnimator->SetTriggerCondition(PLAYER_ANIMATIONCONDITION_TRIGGER_NAME_ONE);
-    }
-    else {
-        TraceLog(LOG_ERROR, "Error: Animator has not been initialized!");
-    }
+    this->myAnimator->SetBoolCondition(PLAYER_ANIMATIONCONDITION_BOOL_RUNNING);
+    this->myAnimator->SetBoolCondition(PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND);
+    this->myAnimator->SetBoolCondition(PLAYER_ANIMATIONCONDITION_BOOL_DEATH);
+    this->myAnimator->SetTriggerCondition(PLAYER_ANIMATIONCONDITION_TRIGGER_JUMP);
 }
+
+int Player::getScore() { return this->score; }
+void Player::setScore(int newScore) { this->score = newScore; }
 #pragma endregion

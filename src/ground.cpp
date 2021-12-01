@@ -34,6 +34,8 @@ Ground::Ground(Vector2 v, int layer, int width, int height) : RenderableEntity(v
     this->collisionLayer = layer;
     this->width = width;
     this->height = height;
+    this->oscillationX = 0;
+    this->oscillationY = 0;
 }
 
 void Ground::ApplyForce(Vector2 force, float deltaTime ) {
@@ -49,6 +51,15 @@ void Ground::SetMovable(bool isMovable, float dirx, float diry, float osx, float
     this->oscillationX = osx;
     this->oscillationY = osy;
 };
+
+float Ground::GetCurrentOscillationX(){
+	return this->dirx * this->oscillationX;
+}
+
+
+float Ground::GetCurrentOscillationY(){
+	return this->diry * this->oscillationY;
+}
 
 void Ground::update(Game *game){
 
@@ -86,7 +97,9 @@ void Ground::update(Game *game){
         }
     }
 
-    DrawRectangleRec(Rectangle{this->pos.x, this->pos.y, (float)this->width, (float)this->height}, RED);
+    Rectangle groundRectangle = (Rectangle){this->pos.x, this->pos.y, (float)this->width, (float)this->height};
+    DrawTextureTiled(game->moonTexture, (Rectangle){0.0f, 0.0f, 16.0f, 16.0f}, groundRectangle, Vector2Zero(), 0.0f, 2.5f, RAYWHITE);
+    //DrawRectangleRec(Rectangle{this->pos.x, this->pos.y, (float)this->width, (float)this->height}, RED);
 }
 
 bool Ground::TouchGround(Player *target, float deltaTime){

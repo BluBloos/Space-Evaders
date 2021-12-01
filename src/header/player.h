@@ -11,16 +11,24 @@ class Player : public Character{
         Player(Vector2, int);
 
         void update(Game *) override;
+        void OnEndState() override;
         float GetCurrentVerticalSpeed();
+
         constexpr static const float blackHoleCoeff = 20.0f;
+
+        int getScore();
+        void setScore(int newScore);
 
     private:
         // attr
+        Game* game;
         float currentVerticalSpeed;
         const float horSpeed = 600.0f;
         const float verSpeed = 310.0f;
         bool inAir;
+        bool runFlag;
         int flipMultiplier;
+        int score;
         
         // The run function for the player updates the horizontal movement of the player based on frame deltaTime
         // and the direction of running.

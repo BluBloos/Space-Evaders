@@ -21,6 +21,12 @@ void Animator::PlayAnimation() {
     
     // Decide which animation to play at this frame
     this->checkTransition();
+    // Check if the animation is in end state or normal animation state
+    if (!this->currentAnimation->animType) { // End State
+        this->target->OnEndState();
+        this->currentAnimation = this->currentAnimation->transitions[0].nextAnimation; // Usually, after end state, the player object should be deleted. But what changed is player's position...
+        return;
+    }
     // Flip the image if current animation direction is not the same as default animation of animator
     this->checkAnimationFlip();
 
@@ -35,20 +41,31 @@ void Animator::PlayAnimation() {
 
         // Go back to the start of animation
         if (this->currentAnimation->currentFrame > (this->currentAnimation->frameNum - 1)) {
-            this->currentAnimation->currentFrame = this->currentAnimation->startFrame; // NOTE(Noah): I reckon that this will not work if startFrame != 0.
+            if (this->currentAnimation->repeatable) {
+                this->currentAnimation->currentFrame = this->currentAnimation->startFrame; // NOTE(Noah): I reckon that this will not work if startFrame != 0.
+            } 
+            else {
+                this->currentAnimation->currentFrame = this->currentAnimation->frameNum - 1;
+            }
         }
 
-        // Move Frame rectangle to the next
-        int leftOffsetForReverseDir = this->currentAnimation->sprite.width - ( this->currentAnimation->frameLeftOffset + (this->currentAnimation->frameNum - 1) * this->currentAnimation->frameRecStride + this->currentAnimation->frameRec.width);
-        int offset = (float)this->currentAnimation->currentFrame * this->currentAnimation->frameRecStride;
-        if (this->dire == (DIRECTION)LEFT) {
-            this->currentAnimation->frameRec.x = leftOffsetForReverseDir + offset;
-        } else { // direction is RIGHT
-            this->currentAnimation->frameRec.x = this->currentAnimation->frameLeftOffset + offset;    
-        }
-
+        // // Move Frame rectangle to the next
+        // int leftOffsetForReverseDir = this->currentAnimation->sprite.width - ( this->currentAnimation->frameLeftOffset + (this->currentAnimation->frameNum - 1) * this->currentAnimation->frameRecStride + this->currentAnimation->frameRec.width);
+        // int offset = (float)this->currentAnimation->currentFrame * this->currentAnimation->frameRecStride;
+        // if (this->dire == (DIRECTION)LEFT) {
+        //     this->currentAnimation->frameRec.x = leftOffsetForReverseDir + offset;
+        // } else { // direction is RIGHT
+        //     this->currentAnimation->frameRec.x = this->currentAnimation->frameLeftOffset + offset;    
+        // }
     }
 
+    if (this->dire) { // Right
+        this->currentAnimation->frameRec.x = (float)this->currentAnimation->currentFrame*(float)this->currentAnimation->sprite.width/this->currentAnimation->frameNum;
+    } 
+    else { // Left
+        this->currentAnimation->frameRec.x = ((float)this->currentAnimation->frameNum - 1.0f - (float)this->currentAnimation->currentFrame)*(float)this->currentAnimation->sprite.width/this->currentAnimation->frameNum;
+    }
+    
     // Draw part of the texture
     Vector2 drawPos = Vector2Subtract(this->target->GetPos(), Vector2{0, (float)this->currentAnimation->sprite.height}); // NOTE(Noah): Defining position of player as bottom of sprite.
     DrawTextureRec(this->currentAnimation->sprite, this->currentAnimation->frameRec, drawPos, WHITE);
@@ -61,6 +78,16 @@ void Animator::PlayAnimation() {
 void Animator::checkTransition(){
 
     for (Transition& t : this->currentAnimation->transitions) {
+
+        // if no condition between these two animations, then directly go to the next animation.
+        if (t.flags.empty()) {
+            if (this->currentAnimation->currentFrame >= (this->currentAnimation->frameNum - 1)) {
+                this->resetAnimationConfig();
+                this->currentAnimation = t.nextAnimation;
+                return;
+            }
+            return;
+        }
 
         bool nextTransition = false;
         
