@@ -18,8 +18,8 @@ bool tank::getCollected() { return this->collected; }
 
 void tank::showTank() {
     if (!this->getCollected()){
-        DrawRectangle(this->posX, this->posY, 15, 15, GRAY);
-        DrawText("O2", this->posX - 5, this->posY - 9, 20, BLACK);
+        DrawRectangle(this->posX, this->posY, 30, 50, GRAY);
+        DrawText("O2", this->posX + 3, this->posY + 15, 20, BLACK);
     }
 
 }

@@ -16,19 +16,20 @@
 // Define the things that happen when the game is initialized.
 Game::Game() {
     std::cout << "Game has been initialized\n\n";
+
     // Create game entities.
     this->characters.push_back(new Player(PLAYER_SPAWN, 0));
     Enemy *evil_enemy = new Enemy((Vector2){700.0f, 200.0f}, 0);
     evil_enemy->SetMovable(true, 0, -1, 100, 100);
     this->characters.push_back((Entity *)evil_enemy);
     this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 4000, 200)); // NOTE: We made this big to test camera movement :)
+
     // Add a moveable platform for player to jump onto!
     Ground *epic_ground = new Ground((Vector2){400.0f, 200.0f}, 0, 200, 100);
     epic_ground->SetMovable(true, -1, 0, 100, 100);
     //epic_ground->SetOscillation(); // set the platform to go back and forth in movement
     this->grounds.push_back((Entity *)epic_ground);
 
-    // this->titleSprite = LoadTexture("./resources/evaderSprite.png");
     this->onTitle = true;
     this->controlFlag = true; // control flag to swap between WASD and arrow keys
     this->settingsFlag = false; // settings flag to display settings
@@ -38,8 +39,10 @@ Game::Game() {
     camera.offset = (Vector2){ SCREENWIDTH/2.0f, SCREENHEIGHT/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
+
     this->timeCount = 0;
     this->oxygenRemaining = 100;
+    this->tanks.push_back(tank(400, 30));
 
     this->moonTexture = LoadTexture("../arts/moon.png");
 }
@@ -58,6 +61,8 @@ float Game::GetLastFrameTime() {
 
 // Define what will happen each frame of the game.
 void Game::GameUpdateAndRender() {
+
+    // oxygen timer
     if ((GetTime() - timeCount) > 1){
         timeCount = GetTime();
         oxygenRemaining--;
@@ -126,7 +131,17 @@ void Game::GameUpdateAndRender() {
                     entity->update(this);
                 }
 
-                DrawText(FormatText("Oxygen Remaining: %i", this->getO2()), camera.target.x + 105, camera.target.y - 295, 30, RAYWHITE);
+                Vector2 coords = characters[0]->GetPos();
+                for (unsigned int i = 0; i < this->tanks.size(); i++) {
+                    tanks[i].showTank();
+                    if ((coords.x >= (tanks[i].getX() - 25)) && (coords.x <= (tanks[i].getX() + 25)) && (coords.y >= (tanks[i].getY() - 15)) && (coords.y <= (tanks[i].getY() + 35))){
+                        if (!tanks[i].getCollected()) {this->tankRefill(); }
+                        // if player touches a tank, set tank to collected
+                        tanks[i].isCollected();
+                    }
+                }
+
+                DrawText(FormatText("Oxygen Remaining: %i", this->getO2()), camera.target.x + 103, camera.target.y - 295, 30, RAYWHITE);
 
                 EndMode2D();
             }
