@@ -7,6 +7,7 @@
 #include "game.h"
 #include "resource.h"
 #include "star.cpp"
+#include "oxygenTank.cpp"
 #include <iostream>
 #include "coin.cpp"
 
@@ -16,6 +17,7 @@
 // Define the things that happen when the game is initialized.
 Game::Game() {
     std::cout << "Game has been initialized\n\n";
+
     // Create game entities.
     // Create player
     this->characters.push_back(new Player(PLAYER_SPAWN, 0));
@@ -32,7 +34,7 @@ Game::Game() {
     this->characters.push_back((Entity *)enemy3);
     // Create platforms
     // Spawn platform
-    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 200, 50)); // NOTE: We made this big to test camera movement :)
+    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 200, 50));
     // Add a moveable platform for player to jump onto!
     Ground *plat1 = new Ground((Vector2){400.0f, 250.0f}, 0, 200, 50);
     Ground *plat2 = new Ground((Vector2){250.0f, 500.0f}, 0, 200, 50);
@@ -105,7 +107,11 @@ Game::Game() {
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
-    score = 0;
+    this->timeCount = 0;
+    this->oxygenRemaining = this->maxO2;
+    this->tanks.push_back(tank(400, 70));
+    this->score = 0;
+
     this->moonTexture = LoadTexture("arts/moon.png");
 }
 
@@ -123,6 +129,12 @@ float Game::GetLastFrameTime() {
 
 // Define what will happen each frame of the game.
 void Game::GameUpdateAndRender() {
+
+    // oxygen timer
+    if ((GetTime() - timeCount) > 1){
+        timeCount = GetTime();
+        oxygenRemaining--;
+    }
 
 	for (int i = 0; i < 200; i++) {
 		this->stars[i].x -= 12 * (stars[i].z / 1);
@@ -163,11 +175,9 @@ void Game::GameUpdateAndRender() {
 
         if (gameOver){
             showGameOver();
-            if (IsKeyPressed(KEY_ENTER)) { switchGameOver();
-            score = 0;
-            for (int i = 0; i < coins.size(); i++) { // put all coins back
-                coins[i].setCollected(false);
-            }}
+            if (IsKeyPressed(KEY_ENTER)) {
+                switchGameOver();
+            }
         }
         else {
 
@@ -192,6 +202,21 @@ void Game::GameUpdateAndRender() {
                 }
 
                 Vector2 coords = characters[0]->GetPos();
+                for (unsigned int i = 0; i < this->tanks.size(); i++) {
+                    tanks[i].showTank();
+                    if ((coords.x >= (tanks[i].getX() - 25)) && (coords.x <= (tanks[i].getX() + 25)) && (coords.y >= (tanks[i].getY() - 15)) && (coords.y <= (tanks[i].getY() + 35))){
+                        if (!tanks[i].getCollected()) {this->tankRefill(); }
+                        // if player touches a tank, set tank to collected
+                        tanks[i].isCollected();
+                    }
+                }
+
+                DrawText(FormatText("Oxygen Remaining: %i", this->getO2()), camera.target.x + 103, camera.target.y - 295, 30, RAYWHITE);
+
+                if (this->oxygenRemaining < 1){
+                    this->switchGameOver();
+                }
+
                 for (unsigned int i = 0; i < this->coins.size(); i++) { // loop through coins and show
                     coins[i].showCoin();
                     if ((coords.x >= (coins[i].getX() - 25)) && (coords.x <= (coins[i].getX() + 25)) && (coords.y >= (coins[i].getY() - 15)) && (coords.y <= (coins[i].getY() + 35))){
@@ -279,6 +304,14 @@ void Game::switchGameOver() {
         // we are going from not gameover to a gameover state.
         // thus, we reset the position of the player!
         this->characters[PLAYER_CHARACTER_INDEX]->SetPos(PLAYER_SPAWN);
+        oxygenRemaining = maxO2;
+        for (int i = 0; i < tanks.size(); i++) { // put all coins back
+            tanks[i].setCollected(false);
+        }
+        score = 0;
+        for (int i = 0; i < coins.size(); i++) { // put all coins back
+            coins[i].setCollected(false);
+        }
     }
     this->gameOver = !this->gameOver;
 
@@ -319,3 +352,11 @@ void Game::setControlFlag() {
 }
 
 bool Game::getControlFlag() { return this->controlFlag; }
+
+int Game::getO2() { return oxygenRemaining; }
+void Game::tankRefill() {
+    if (this->oxygenRemaining + 50 <= maxO2){
+        this->oxygenRemaining = this->oxygenRemaining + 50;
+    }
+    else { this->oxygenRemaining = maxO2; }
+}
