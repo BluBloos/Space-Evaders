@@ -3,6 +3,7 @@
 
 #include "entity.h"
 #include "star.h"
+#include "particles.h"
 #include <vector>
 #include "oxygenTank.h"
 #include "coin.h"
@@ -16,9 +17,9 @@ class Game {
         // Function for game to implement and is to be called for each frame
         // to be rendered.    
         void GameUpdateAndRender();
-
         std::vector<Entity *> GetGrounds(); // Will return all the ground entities
         std::vector<Entity *> GetCharacters(); // Will return all the ground entities
+
         float GetLastFrameTime();
         void showSettings();
         void setSettingsFlag();
@@ -36,6 +37,8 @@ class Game {
         void switchGameOver();
         void showGameOver();
 
+        // just debug things hehe
+        Bullets *debugBulletObject;
         void tankRefill();
         int getO2();
         int timeCount;

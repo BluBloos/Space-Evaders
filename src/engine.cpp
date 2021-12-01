@@ -1,7 +1,9 @@
 // wrapped to avoid double inclusion.
 // Directly include the game code. Single file compilation model.
+#include "stdio.h"
 #include "game.cpp"
 #include "header/raylib_wrapped.h"
+
 
 int main(void)
 {

@@ -1,23 +1,31 @@
 #include <iostream>
 #include <vector>
+#include "raylib_wrapped.h"
+#include "bullets.h"
 #include "player.cpp"
 #include "entity.cpp"
 #include "ground.cpp"
 #include "enemy.cpp"
+#include "bullets.cpp"
 #include "game.h"
 #include "resource.h"
 #include "star.cpp"
+#include "particles.cpp"
 #include "oxygenTank.cpp"
 #include <iostream>
 #include "coin.cpp"
 
-#define PLAYER_SPAWN (Vector2){0.0f, 400.0f}
+#define PLAYER_SPAWN (Vector2){0.0f, 390.0f} // Slightly above ground to be safe.
 #define PLAYER_CHARACTER_INDEX 0
+
+void DebugBulletHitCallback(bullet_hit_info info) {
+    // does nothing :)
+}
 
 // Define the things that happen when the game is initialized.
 Game::Game() {
     std::cout << "Game has been initialized\n\n";
-
+    //SetRandomSeed(); // set the random seed for the random number generator (Raylib function)
     // Create game entities.
     // Create player
     this->characters.push_back(new Player(PLAYER_SPAWN, 0));
@@ -107,6 +115,31 @@ Game::Game() {
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
 
+    // Bullet debug testing
+    this->debugBulletObject = new Bullets();
+    this->debugBulletObject->SetActive(
+        (Vector2){ 900.0f, 250.0f },
+        (Vector2){400.0f, 250.0f},
+        30.0f,
+        500.0f, // pixels/second
+        DebugBulletHitCallback
+    );
+
+    #ifdef DEBUG
+    // Unit test the debug bullet object
+    for (unsigned int i = 0; i < 1000; i++) {
+        Rectangle floatingPlatformRect = Rectangle{400.0f, 200.0f, 200, 100};
+        Vector2 collisionPoint;
+        bool result = this->debugBulletObject->CheckCollisionWithRectangle(
+            floatingPlatformRect, 
+            Vector2{650.0f, 250.0f},
+            Vector2{550.0f, 250.0f},
+            &collisionPoint
+        );
+        std::cout << "result of debugBulletObject->CheckCollisionWithRectangle() = " << result << std::endl;
+    }
+    // END OF UNIT TEST
+    #endif
     this->timeCount = 0;
     this->oxygenRemaining = this->maxO2;
     this->tanks.push_back(tank(400, 70));
@@ -131,12 +164,6 @@ float Game::GetLastFrameTime() {
 // Define what will happen each frame of the game.
 void Game::GameUpdateAndRender() {
 
-    // oxygen timer
-    if ((GetTime() - timeCount) > 1){
-        timeCount = GetTime();
-        oxygenRemaining--;
-    }
-
 	for (int i = 0; i < 200; i++) {
 		this->stars[i].x -= 12 * (stars[i].z / 1);
 
@@ -148,6 +175,7 @@ void Game::GameUpdateAndRender() {
 
     BeginDrawing(); 
     ClearBackground(BLACK);
+    
 
     for (int i = 0; i < 200; i++) {
 		float x = this -> stars[i].x;
@@ -189,6 +217,12 @@ void Game::GameUpdateAndRender() {
             else {
 
                 this->updateCameraSmoothFollowInsideMap(deltaTime);
+                // oxygen timer
+                if ((GetTime() - timeCount) > 1){
+                    timeCount = GetTime();
+                    oxygenRemaining--;
+                }
+
                 BeginMode2D(this->camera);
 
 
@@ -201,6 +235,10 @@ void Game::GameUpdateAndRender() {
                     Entity *entity = this->characters[i];
                     entity->update(this);
                 }
+
+                // update debug bullets
+                this->debugBulletObject->Shoot(); // create 60 bullets / second.
+                this->debugBulletObject->update(this); 
 
                 Vector2 coords = characters[0]->GetPos();
                 for (unsigned int i = 0; i < this->tanks.size(); i++) {
@@ -236,6 +274,7 @@ void Game::GameUpdateAndRender() {
         }
     }
 
+    DrawFPS(10, 550);
     EndDrawing();
 }
 
@@ -286,6 +325,7 @@ Game::~Game() {
         delete entity;
     }
 
+    delete this->debugBulletObject;
     // unload the moon texture.
     UnloadTexture(this->moonTexture);
     UnloadTexture(this->enemyTexture);
