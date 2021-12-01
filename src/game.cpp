@@ -14,6 +14,7 @@
 #include "oxygenTank.cpp"
 #include <iostream>
 #include "coin.cpp"
+#include "rocket.cpp"
 
 #define PLAYER_SPAWN (Vector2){0.0f, 390.0f} // Slightly above ground to be safe.
 #define PLAYER_CHARACTER_INDEX 0
@@ -30,11 +31,11 @@ Game::Game() {
     // Create player
     this->characters.push_back(new Player(PLAYER_SPAWN, 0));
     // Create enemies
-    Enemy *enemy1 = new Enemy((Vector2){1500.0f, 300.0f}, 0);
+    Enemy *enemy1 = new Enemy((Vector2){1500.0f, 235.0f}, 0);
     enemy1->SetMovable(true, 1, 0, 200, 100);
-    Enemy *enemy2 = new Enemy((Vector2){4700.0f, 250.0f}, 0);
+    Enemy *enemy2 = new Enemy((Vector2){4700.0f, 230.0f}, 0);
     enemy2->SetMovable(true, 1, 0, 200, 100);
-    Enemy *enemy3 = new Enemy((Vector2){5000.0f, 450.0f}, 0);
+    Enemy *enemy3 = new Enemy((Vector2){5000.0f, 430.0f}, 0);
     enemy3->SetMovable(true, -1, 0, 200, 100);
 
     this->characters.push_back((Entity *)enemy1);
@@ -50,8 +51,8 @@ Game::Game() {
     Ground *plat4 = new Ground((Vector2){800.0f, 400.0f}, 0, 200, 50);
 
     Ground *plat5 = new Ground((Vector2){1200.0f, 500.0f}, 0, 1000, 50);
-    Ground *plat6 = new Ground((Vector2){1400.0f, 350.0f}, 0, 200, 50);
-    Ground *plat7 = new Ground((Vector2){1800.0f, 350.0f}, 0, 200, 50);
+    Ground *plat6 = new Ground((Vector2){1400.0f, 325.0f}, 0, 200, 50);
+    Ground *plat7 = new Ground((Vector2){1800.0f, 325.0f}, 0, 200, 50);
     Ground *plat8 = new Ground((Vector2){1650.0f, 150.0f}, 0, 100, 50);
 
     Ground *plat9 = new Ground((Vector2){2350.0f, 500.0f}, 0, 300, 50);
@@ -70,7 +71,7 @@ Game::Game() {
 
     Ground *plat18 = new Ground((Vector2){5500.0f, 300.0f}, 0, 200, 50);
 	Ground *plat19 = new Ground((Vector2){5900.0f, 500.0f}, 0, 200, 50);
-	Ground *plat20 = new Ground((Vector2){6300.0f, 400.0f}, 0, 200, 50);
+	Ground *plat20 = new Ground((Vector2){6300.0f, 400.0f}, 0, 400, 50);
 
 
 
@@ -99,9 +100,18 @@ Game::Game() {
 	this->grounds.push_back((Entity *)plat19);
 	this->grounds.push_back((Entity *)plat20);
 
-    this->coins.push_back(coin(400, 30));
-    this->coins.push_back(coin(700, 30));
-    this->coins.push_back(coin(700, 200));
+    this->coins.push_back(coin(80, 250));
+    this->coins.push_back(coin(1695, -20));
+    this->coins.push_back(coin(1495, 175));
+    this->coins.push_back(coin(1895, 175));
+    this->coins.push_back(coin(3500, 100));
+    this->coins.push_back(coin(4850, 150));
+    this->coins.push_back(coin(4850, 400));
+    this->coins.push_back(coin(5600, 150));
+    this->coins.push_back(coin(6400, 250));
+
+    this->tanks.push_back(tank(495, 30));
+    this->tanks.push_back(tank(3875, 30));
 
     this->onTitle = true;
     this->controlFlag = true; // control flag to swap between WASD and arrow keys
@@ -112,6 +122,7 @@ Game::Game() {
     camera.offset = (Vector2){ SCREENWIDTH/2.0f, SCREENHEIGHT/2.0f };
     camera.rotation = 0.0f;
     camera.zoom = 1.0f;
+    this->playerCameraLatentSpace = this->camera.target;
 
     // Bullet debug testing
     this->debugBulletObject = new Bullets();
@@ -140,7 +151,8 @@ Game::Game() {
     #endif
     this->timeCount = 0;
     this->oxygenRemaining = this->maxO2;
-    this->tanks.push_back(tank(400, 70));
+    //this->tanks.push_back(tank(400, 70));
+    //this->tanks.push_back()
     this->score = 0;
 
     this->moonTexture = LoadTexture("../arts/moon.png");
@@ -164,7 +176,7 @@ float Game::GetLastFrameTime() {
 void Game::GameUpdateAndRender() {
 
 	for (int i = 0; i < 200; i++) {
-		this->stars[i].x -= 12 * (stars[i].z / 1);
+		this->stars[i].x -= 6 * (stars[i].z / 1);
 
 		if (this->stars[i].x <= 0) {  // Check if the star has gone off screen
 			this->stars[i].x += 2000;
@@ -202,9 +214,15 @@ void Game::GameUpdateAndRender() {
         }
 
         if (gameOver){
-            showGameOver();
+        	if (this->rocket->getComplete()) {
+        		showGameComplete();
+        	} else {
+        		showGameOver();
+        	}
             if (IsKeyPressed(KEY_ENTER)) {
                 switchGameOver();
+                this->rocket->setComplete(false);
+                score = 0;
             }
         }
         else {
@@ -242,7 +260,7 @@ void Game::GameUpdateAndRender() {
                 Vector2 coords = characters[0]->GetPos();
                 for (unsigned int i = 0; i < this->tanks.size(); i++) {
                     tanks[i].showTank();
-                    if ((coords.x >= (tanks[i].getX() - 25)) && (coords.x <= (tanks[i].getX() + 25)) && (coords.y >= (tanks[i].getY() - 15)) && (coords.y <= (tanks[i].getY() + 35))){
+                    if ((coords.x >= (tanks[i].getX()) - 94) && (coords.x <= (tanks[i].getX()) + 25) && (coords.y >= (tanks[i].getY()) - 50) && (coords.y <= (tanks[i].getY()) + 124)){
                         if (!tanks[i].getCollected()) {this->tankRefill(); }
                         // if player touches a tank, set tank to collected
                         tanks[i].isCollected();
@@ -258,13 +276,20 @@ void Game::GameUpdateAndRender() {
 
                 for (unsigned int i = 0; i < this->coins.size(); i++) { // loop through coins and show
                     coins[i].showCoin();
-                    if ((coords.x >= (coins[i].getX() - 25)) && (coords.x <= (coins[i].getX() + 25)) && (coords.y >= (coins[i].getY() - 15)) && (coords.y <= (coins[i].getY() + 35))){
+                    if ((coords.x >= (coins[i].getX() - 79)) && (coords.x <= (coins[i].getX() + 15)) && (coords.y >= (coins[i].getY() - 15)) && (coords.y <= (coins[i].getY() + 79))){
                         if (!coins[i].getCollected()) {score = score + 10; }
                         // if player touches coin, set coin to collected
                         coins[i].isCollected();
 
                     }
+
                 }
+
+                this->rocket->displayRocket();
+                if ((coords.x >= (this->rocket -> getX() + 25)) && (coords.x <= (this->rocket -> getX() + 100)) && (coords.y >= (this->rocket -> getY() + 20)) && (coords.y <= (this->rocket-> getY() + 250))){
+                	this->rocket->isComplete();
+                	this->switchGameOver();
+				}
 
                 std::cout << "x: " << coords.x << " y: " << coords.y << std::endl;
 
@@ -281,18 +306,33 @@ void Game::GameUpdateAndRender() {
 // NOTE(Noah): Camera speed must be exactly player speed to avoid buggy behaviour.
 // Overall this type of camera moement feels nice!!!!
 void Game::updateCameraSmoothFollowInsideMap(float delta){
-    float minSpeed = 600.0f;
-    float minEffectLength = 5.0f;
-    float fractionSpeed = 0.8f;
-
+    
     Vector2 playerPos = this->characters[0]->GetPos();
-    //this->camera.offset = (Vector2){ SCREENWIDTH/2.0f - OFFSETCORRECTVALUE, SCREENHEIGHT/2.0f };
-    Vector2 diff = Vector2Subtract(playerPos, this->camera.target);
-
     float fringeLenX = 400.0f;
     float fringeLenY = 400.0f;
     bool playerOnFringeX = abs(this->camera.target.x - playerPos.x) > SCREENWIDTH/2.0f - fringeLenX;
     bool playerOnFringeY = abs(this->camera.target.y - playerPos.y) > SCREENHEIGHT/2.0f - fringeLenY;
+
+    // Update the Lerp position.
+    if (playerOnFringeX) {
+        this->playerCameraLatentSpace.x = playerPos.x;
+    }
+    if (playerOnFringeY) {
+        this->playerCameraLatentSpace.y = playerPos.y;
+    }
+    
+    // delta is seconds / frame.
+    // 16ms / frame -> 0.016
+
+    float distance = Vector2Distance(this->camera.target, this->playerCameraLatentSpace);
+    this->camera.target = Vector2Lerp(this->camera.target, this->playerCameraLatentSpace, delta*3);
+
+    /*float minSpeed = 600.0f;
+    float minEffectLength = 5.0f;
+    float fractionSpeed = 0.8f;
+   
+    //this->camera.offset = (Vector2){ SCREENWIDTH/2.0f - OFFSETCORRECTVALUE, SCREENHEIGHT/2.0f };
+    Vector2 diff = Vector2Subtract(playerPos, this->camera.target);
 
     // adjust the diff accordingly, to only move in specific dir.
     if (playerOnFringeX && !playerOnFringeY) {
@@ -309,6 +349,7 @@ void Game::updateCameraSmoothFollowInsideMap(float delta){
         float speed = fmaxf(fractionSpeed*length, minSpeed);
         this->camera.target = Vector2Add(this->camera.target, Vector2Scale(diff, speed*delta/length));
     }
+    */
 }
 
 // Define the things that will happen when the game is closed.
@@ -341,7 +382,14 @@ void Game::showGameOver() {
     DrawText("Press Enter to Respawn", GetScreenWidth()*0.225, GetScreenHeight()*0.7, 40, RAYWHITE);
 }
 
-void Game::switchGameOver() {
+void Game::showGameComplete() {
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), GREEN);
+    DrawText("YOU ESCAPED!", GetScreenWidth()*0.08, GetScreenHeight()*0.3, 95, RAYWHITE);
+    DrawText(FormatText("Final Score: %i", score), GetScreenWidth()*0.08, GetScreenHeight()*0.5, 40, RAYWHITE);
+    DrawText("Press Enter to Respawn", GetScreenWidth()*0.08, GetScreenHeight()*0.6, 40, RAYWHITE);
+}
+
+void Game::switchGameOver() { 
     
     if (this->gameOver == false) {
         // we are going from not gameover to a gameover state.
@@ -351,7 +399,6 @@ void Game::switchGameOver() {
         for (int i = 0; i < tanks.size(); i++) { // put all coins back
             tanks[i].setCollected(false);
         }
-        score = 0;
         for (int i = 0; i < coins.size(); i++) { // put all coins back
             coins[i].setCollected(false);
         }

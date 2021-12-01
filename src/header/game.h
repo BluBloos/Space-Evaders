@@ -7,6 +7,7 @@
 #include <vector>
 #include "oxygenTank.h"
 #include "coin.h"
+#include "rocket.h"
 
 class Game {
     
@@ -36,6 +37,7 @@ class Game {
         bool getGameOver();
         void switchGameOver();
         void showGameOver();
+        void showGameComplete();
 
         // just debug things hehe
         Bullets *debugBulletObject;
@@ -52,6 +54,7 @@ class Game {
         std::vector<tank> tanks;
         std::vector<coin> coins;
         Star stars[200];
+        Rocket *rocket = new Rocket(6375,175);
         bool gameOver;
         bool settingsFlag;
         bool controlFlag;
@@ -60,6 +63,7 @@ class Game {
         int oxygenRemaining;
         bool oxygenDeath;
         int score;
+        Vector2 playerCameraLatentSpace;
 };
 
 #endif

@@ -10,7 +10,7 @@
 #define SCREENHEIGHT 600
 // Because origin of the image is at upper-left corner, the offset value of cameras should be corrected.
 #define OFFSETCORRECTVALUE 100.0f
-#define PI 3.141592653589793238
+// Animation file path and animation name
 //#define DEBUG
 #define PLAYER_ANIMATIONSTART_PATH "../arts/player_stand-halfSize.png"
 #define PLAYER_ANIMATIONSTART_NAME "Stand"
