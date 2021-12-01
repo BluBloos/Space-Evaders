@@ -9,6 +9,7 @@ Player::Player(Vector2 v, int layer) : Character(v, layer){
     this->currentVerticalSpeed = 0.0;
     this->inAir = true;
     this->flipMultiplier = 1;
+    this->score = 0;
 
     // Initialize Animator
     this->InitializeAnimations();                                                                     // Animator Example
@@ -84,17 +85,9 @@ void Player::update(Game *game){
 		}
 
 
-        // TODO: Check if the player is touching the sides of the screen.
-        if (this->pos.x < 0) {
-            this->pos.x = 0; // Snap the player.
-        }
-        if (this->pos.x > 3950) {
-            // TODO: Change 850 from a constant to something that is dependent on a variable screen size.
-            this->pos.x = 3950;
-        }
         // TODO: Check if player is touching top or bottom of the screen, in which case, send them back to spawn (?).
 
-        if (this->pos.y <= 0){ //player has fell off the world -> kill them
+        if (this->pos.y >= 1000){ //player has fell off the world -> kill them
             game->switchGameOver();
             }
     }
@@ -236,4 +229,7 @@ void Player::SetConditions(){
         TraceLog(LOG_ERROR, "Error: Animator has not been initialized!");
     }
 }
+
+int Player::getScore() { return this->score; }
+void Player::setScore(int newScore) { this->score = newScore; }
 #pragma endregion

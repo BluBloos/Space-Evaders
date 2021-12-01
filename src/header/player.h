@@ -14,6 +14,9 @@ class Player : public Character{
         float GetCurrentVerticalSpeed();
         constexpr static const float blackHoleCoeff = 20.0f;
 
+        int getScore();
+        void setScore(int newScore);
+
     private:
         // attr
         float currentVerticalSpeed;
@@ -21,6 +24,7 @@ class Player : public Character{
         const float verSpeed = 310.0f;
         bool inAir;
         int flipMultiplier;
+        int score;
         
         // The run function for the player updates the horizontal movement of the player based on frame deltaTime
         // and the direction of running.

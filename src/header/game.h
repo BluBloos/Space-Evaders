@@ -5,6 +5,7 @@
 #include "star.h"
 #include <vector>
 #include "oxygenTank.h"
+#include "coin.h"
 
 class Game {
     
@@ -43,6 +44,7 @@ class Game {
         std::vector<Entity *> characters;
         std::vector<Entity *> grounds;
         std::vector<tank> tanks;
+        std::vector<coin> coins;
         Star stars[200];
         bool gameOver;
         bool settingsFlag;
@@ -50,6 +52,7 @@ class Game {
         Camera2D camera;
         void updateCameraSmoothFollowInsideMap(float);
         int oxygenRemaining;
+        int score;
 };
 
 #endif

@@ -9,6 +9,7 @@
 #include "star.cpp"
 #include "oxygenTank.cpp"
 #include <iostream>
+#include "coin.cpp"
 
 #define PLAYER_SPAWN (Vector2){0.0f, 400.0f}
 #define PLAYER_CHARACTER_INDEX 0
@@ -18,17 +19,83 @@ Game::Game() {
     std::cout << "Game has been initialized\n\n";
 
     // Create game entities.
+    // Create player
     this->characters.push_back(new Player(PLAYER_SPAWN, 0));
-    Enemy *evil_enemy = new Enemy((Vector2){700.0f, 200.0f}, 0);
-    evil_enemy->SetMovable(true, 0, -1, 100, 100);
-    this->characters.push_back((Entity *)evil_enemy);
-    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 4000, 200)); // NOTE: We made this big to test camera movement :)
+    // Create enemies
+    Enemy *enemy1 = new Enemy((Vector2){1500.0f, 300.0f}, 0);
+    enemy1->SetMovable(true, 1, 0, 200, 100);
+    Enemy *enemy2 = new Enemy((Vector2){4700.0f, 250.0f}, 0);
+    enemy2->SetMovable(true, 1, 0, 200, 100);
+    Enemy *enemy3 = new Enemy((Vector2){5000.0f, 450.0f}, 0);
+    enemy3->SetMovable(true, -1, 0, 200, 100);
 
+    this->characters.push_back((Entity *)enemy1);
+    this->characters.push_back((Entity *)enemy2);
+    this->characters.push_back((Entity *)enemy3);
+    // Create platforms
+    // Spawn platform
+    this->grounds.push_back(new Ground((Vector2){-20.0f, 400.0f}, 0, 200, 50));
     // Add a moveable platform for player to jump onto!
-    Ground *epic_ground = new Ground((Vector2){400.0f, 200.0f}, 0, 200, 100);
-    epic_ground->SetMovable(true, -1, 0, 100, 100);
-    //epic_ground->SetOscillation(); // set the platform to go back and forth in movement
-    this->grounds.push_back((Entity *)epic_ground);
+    Ground *plat1 = new Ground((Vector2){400.0f, 250.0f}, 0, 200, 50);
+    Ground *plat2 = new Ground((Vector2){250.0f, 500.0f}, 0, 200, 50);
+    Ground *plat3 = new Ground((Vector2){550.0f, 500.0f}, 0, 200, 50);
+    Ground *plat4 = new Ground((Vector2){800.0f, 400.0f}, 0, 200, 50);
+
+    Ground *plat5 = new Ground((Vector2){1200.0f, 500.0f}, 0, 1000, 50);
+    Ground *plat6 = new Ground((Vector2){1400.0f, 350.0f}, 0, 200, 50);
+    Ground *plat7 = new Ground((Vector2){1800.0f, 350.0f}, 0, 200, 50);
+    Ground *plat8 = new Ground((Vector2){1650.0f, 150.0f}, 0, 100, 50);
+
+    Ground *plat9 = new Ground((Vector2){2350.0f, 500.0f}, 0, 300, 50);
+    plat9->SetMovable(true, 1, 0, 150, 100);
+    Ground *plat10 = new Ground((Vector2){2950.0f, 500.0f}, 0, 300, 50);
+    plat10->SetMovable(true, 0, -1, 100, 150);
+    Ground *plat11 = new Ground((Vector2){3100.0f, 200.0f}, 0, 300, 50);
+    plat11->SetMovable(true, 1, 0, 100, 150);
+
+    Ground *plat12 = new Ground((Vector2){3800.0f, 200.0f}, 0, 200, 50);
+    Ground *plat13 = new Ground((Vector2){4050.0f, 300.0f}, 0, 200, 50);
+    Ground *plat14 = new Ground((Vector2){4300.0f, 400.0f}, 0, 200, 50);
+    Ground *plat15 = new Ground((Vector2){4700.0f, 300.0f}, 0, 300, 50);
+    Ground *plat16 = new Ground((Vector2){4700.0f, 500.0f}, 0, 300, 50);
+    Ground *plat17 = new Ground((Vector2){5100.0f, 400.0f}, 0, 300, 50);
+
+    Ground *plat18 = new Ground((Vector2){5500.0f, 300.0f}, 0, 200, 50);
+	Ground *plat19 = new Ground((Vector2){5900.0f, 500.0f}, 0, 200, 50);
+	Ground *plat20 = new Ground((Vector2){6300.0f, 400.0f}, 0, 200, 50);
+
+
+
+    this->grounds.push_back((Entity *)plat1);
+    this->grounds.push_back((Entity *)plat2);
+    this->grounds.push_back((Entity *)plat3);
+    this->grounds.push_back((Entity *)plat4);
+    this->grounds.push_back((Entity *)plat5);
+
+    this->grounds.push_back((Entity *)plat6);
+    this->grounds.push_back((Entity *)plat7);
+    this->grounds.push_back((Entity *)plat8);
+
+    this->grounds.push_back((Entity *)plat9);
+    this->grounds.push_back((Entity *)plat10);
+    this->grounds.push_back((Entity *)plat11);
+
+    this->grounds.push_back((Entity *)plat12);
+    this->grounds.push_back((Entity *)plat13);
+    this->grounds.push_back((Entity *)plat14);
+    this->grounds.push_back((Entity *)plat15);
+    this->grounds.push_back((Entity *)plat16);
+    this->grounds.push_back((Entity *)plat17);
+
+    this->grounds.push_back((Entity *)plat18);
+	this->grounds.push_back((Entity *)plat19);
+	this->grounds.push_back((Entity *)plat20);
+
+
+
+    this->coins.push_back(coin(400, 30));
+    this->coins.push_back(coin(700, 30));
+    this->coins.push_back(coin(700, 200));
 
     this->onTitle = true;
     this->controlFlag = true; // control flag to swap between WASD and arrow keys
@@ -42,9 +109,10 @@ Game::Game() {
 
     this->timeCount = 0;
     this->oxygenRemaining = this->maxO2;
-    this->tanks.push_back(tank(400, 30));
+    this->tanks.push_back(tank(400, 70));
+    this->score = 0;
 
-    this->moonTexture = LoadTexture("../arts/moon.png");
+    this->moonTexture = LoadTexture("arts/moon.png");
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -109,10 +177,7 @@ void Game::GameUpdateAndRender() {
             showGameOver();
             if (IsKeyPressed(KEY_ENTER)) {
                 switchGameOver();
-                oxygenRemaining = maxO2;
-                for (int i = 0; i < tanks.size(); i++) { // put all coins back
-                    tanks[i].setCollected(false);
-                }}
+            }
         }
         else {
 
@@ -152,6 +217,19 @@ void Game::GameUpdateAndRender() {
                     this->switchGameOver();
                 }
 
+                for (unsigned int i = 0; i < this->coins.size(); i++) { // loop through coins and show
+                    coins[i].showCoin();
+                    if ((coords.x >= (coins[i].getX() - 25)) && (coords.x <= (coins[i].getX() + 25)) && (coords.y >= (coins[i].getY() - 15)) && (coords.y <= (coins[i].getY() + 35))){
+                        if (!coins[i].getCollected()) {score = score + 10; }
+                        // if player touches coin, set coin to collected
+                        coins[i].isCollected();
+
+                    }
+                }
+
+                std::cout << "x: " << coords.x << " y: " << coords.y << std::endl;
+                //if (coords.x < )
+                DrawText(FormatText("Score: %i", score), camera.target.x - 410, camera.target.y - 295, 30, RAYWHITE);
                 EndMode2D();
             }
         }
@@ -171,8 +249,8 @@ void Game::updateCameraSmoothFollowInsideMap(float delta){
     //this->camera.offset = (Vector2){ SCREENWIDTH/2.0f - OFFSETCORRECTVALUE, SCREENHEIGHT/2.0f };
     Vector2 diff = Vector2Subtract(playerPos, this->camera.target);
 
-    float fringeLenX = 200.0f; // 50 pixels of the sides of screen.
-    float fringeLenY = 100.0f;
+    float fringeLenX = 400.0f;
+    float fringeLenY = 400.0f;
     bool playerOnFringeX = abs(this->camera.target.x - playerPos.x) > SCREENWIDTH/2.0f - fringeLenX;
     bool playerOnFringeY = abs(this->camera.target.y - playerPos.y) > SCREENHEIGHT/2.0f - fringeLenY;
 
@@ -216,6 +294,7 @@ Game::~Game() {
 void Game::showGameOver() {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), RED);
     DrawText("Game Over", GetScreenWidth()*0.225, GetScreenHeight()*0.3, 100, RAYWHITE);
+    DrawText(FormatText("Final Score: %i", score), GetScreenWidth()*0.225, GetScreenHeight()*0.5, 40, RAYWHITE);
     DrawText("Press Enter to Respawn", GetScreenWidth()*0.225, GetScreenHeight()*0.6, 40, RAYWHITE);
 }
 
@@ -225,6 +304,14 @@ void Game::switchGameOver() {
         // we are going from not gameover to a gameover state.
         // thus, we reset the position of the player!
         this->characters[PLAYER_CHARACTER_INDEX]->SetPos(PLAYER_SPAWN);
+        oxygenRemaining = maxO2;
+        for (int i = 0; i < tanks.size(); i++) { // put all coins back
+            tanks[i].setCollected(false);
+        }
+        score = 0;
+        for (int i = 0; i < coins.size(); i++) { // put all coins back
+            coins[i].setCollected(false);
+        }
     }
     this->gameOver = !this->gameOver;
 
@@ -235,7 +322,6 @@ void Game::showTitle() {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
     DrawText("Space Evaders", GetScreenWidth()*0.1, GetScreenHeight()*0.3, 95, RAYWHITE);
     DrawText("Press Enter to Start", GetScreenWidth()*0.2, GetScreenHeight()*0.8, 50, RAYWHITE);
-    // DrawTexture(this->titleSprite, GetScreenWidth()*0.25, GetScreenHeight()*0.7, RAYWHITE);
 }
 void Game::showSettings() {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
