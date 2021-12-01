@@ -94,10 +94,8 @@ void Player::update(Game *game){
 			}
 		}
 
-
         // TODO: Check if player is touching top or bottom of the screen, in which case, send them back to spawn (?).
-
-        if (this->pos.y >= 1000){ //player has fell off the world -> kill them
+        if (this->pos.y >= 750){ //player has fell off the world -> kill them
             this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_DEATH, true);
             // game->switchGameOver();
             this->game = game;
@@ -126,12 +124,15 @@ void Player::update(Game *game){
     }
 
     // Update the vertical movement of the player, note the flip multiplier.
-    if (this->inAir) {
-        this->pos.y += this->currentVerticalSpeed * deltaTime * flipMultiplier;
-        this->currentVerticalSpeed += Entity::gravity * deltaTime;
+    if (this->runFlag) {
+        if (this->inAir) {
+            this->pos.y += this->currentVerticalSpeed * deltaTime * flipMultiplier;
+            this->currentVerticalSpeed += Entity::gravity * deltaTime;
+        }
     }
 
     // Gravity function of the player
+    /*
     if (IsKeyDown(KEY_G)) {
         // Activate the black hole and move all platforms to the player.
         std::vector<Entity *> grounds = game->GetGrounds();
@@ -155,6 +156,7 @@ void Player::update(Game *game){
             }
         }
     }
+    */
 
     this->myAnimator->PlayAnimation();
 }
