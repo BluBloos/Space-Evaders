@@ -112,7 +112,7 @@ Game::Game() {
     this->tanks.push_back(tank(400, 70));
     this->score = 0;
 
-    this->moonTexture = LoadTexture("arts/moon.png");
+    this->moonTexture = LoadTexture("../arts/moon.png");
 }
 
 std::vector<Entity *> Game::GetGrounds() {

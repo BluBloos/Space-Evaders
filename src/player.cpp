@@ -32,7 +32,6 @@ void Player::update(Game *game){
             if (IsKeyDown(KEY_A)) {dir = -1.0f;}
             if (IsKeyDown(KEY_D)) {dir = 1.0f;}
         }
-
         else {
             if (IsKeyDown(KEY_LEFT)) {dir = -1.0f;}
             if (IsKeyDown(KEY_RIGHT)) {dir = 1.0f;}
@@ -72,6 +71,7 @@ void Player::update(Game *game){
                 this->currentVerticalSpeed = 0.0f;
                 //this->pos.y = ground->GetPos().y - this->animations.at(PLAYER_ANIMATIONSTART_NAME).sprite.height; // snap the y position of the player.
                 this->pos.y = ground->GetPos().y;
+                this->pos.x += ground->GetCurrentOscillationX();
                 this->myAnimator->SetBool(PLAYER_ANIMATIONCONDITION_BOOL_TOUCH_GROUND, true);
                 break;
             } else {
