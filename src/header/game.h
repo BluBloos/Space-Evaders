@@ -28,6 +28,7 @@ class Game {
         bool onTitle;
         Texture2D titleSprite;
         Texture2D moonTexture;
+        Texture2D enemyTexture;
         // void showTitle(Texture2D sprite);
         void showTitle();
 
