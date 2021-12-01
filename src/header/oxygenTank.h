@@ -15,7 +15,10 @@ public:
     int getY();
     void setCollected(bool collect);
     void isCollected();
+    Rectangle GetRecBounds();
 private:
+    float width;
+    float height;
     int posX;
     int posY;
     bool collected;
