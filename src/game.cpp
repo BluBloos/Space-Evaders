@@ -113,6 +113,7 @@ Game::Game() {
     this->score = 0;
 
     this->moonTexture = LoadTexture("../arts/moon.png");
+    this->enemyTexture = LoadTexture("../arts/enemy.png");
 }
 
 std::vector<Entity *> Game::GetGrounds() {
@@ -287,6 +288,7 @@ Game::~Game() {
 
     // unload the moon texture.
     UnloadTexture(this->moonTexture);
+    UnloadTexture(this->enemyTexture);
 
     std::cout << "Game has been closed\n";
 }
