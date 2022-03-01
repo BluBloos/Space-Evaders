@@ -1,6 +1,6 @@
 <img width="843" alt="Screen Shot 2021-12-06 at 11 02 21 PM" src="https://user-images.githubusercontent.com/38915815/144964107-0618a666-bca1-4c03-bc6a-dc05cfb2c224.png">
 
-# Space-Evaders
+# Space-Evaders 🚀
 
 A single-level, space-themed game built with C and the popular games programming library, Raylib https://www.raylib.com/
 
