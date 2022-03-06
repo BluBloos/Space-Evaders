@@ -2,10 +2,15 @@
 
 pushd raylib/src
 export MACOSX_DEPLOYMENT_TARGET=10.9
-make PLATFORM=PLATFORM_DESKTOP
+rm *.o
+rm libraylib.a
+make PLATFORM=PLATFORM_DESKTOP -B
 popd
 
 mkdir bin
 pushd bin
-clang++ -g -std=c++11 -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT -framework OpenGL ../src/engine.cpp -o SpaceEvaders -I ../src/ -I ../src/header/ -I ../raylib/src -L ../raylib/src/  -lraylib
+cp -r ../arts arts
+clang++ -g -std=c++11 -framework CoreVideo -framework IOKit -framework Cocoa -framework GLUT \
+    -framework OpenGL ../src/engine.cpp -o SpaceEvaders -I ../src/ -I ../src/header/ -I ../raylib/src \
+    -L ../raylib/src/  -lraylib
 popd

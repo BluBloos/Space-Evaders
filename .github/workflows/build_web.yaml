@@ -23,4 +23,4 @@ jobs:
       - name: Install surge
         run: npm install -g surge
       - name: Publish to surge
-        run: surge build/raylib/surge ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_TOKEN }}
+        run: surge bin/surge ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_TOKEN }}
