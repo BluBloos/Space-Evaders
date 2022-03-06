@@ -39,6 +39,8 @@ Finally, to the run the game, use the run script
 
 ## Web
 
+The following instructions assume that the host machine is Unix-like. These commands were tested on macOS.
+
 Simply run
 
 ```bash
