@@ -6,6 +6,8 @@ A single-level, space-themed game built with C and the popular games programming
 
 This game was built as a course project for CMPE 320. This project was completed together with a team of 6 other students. We followed the agile development methodology and the scrum framework, and we used JIRA to manage project tasks.
 
+You can find a demo of the game at https://spacevaders.surge.sh
+
 # Steps for Building
 
 After cloning the repo, make sure to run:
@@ -27,7 +29,26 @@ xcode-select --install
 
 Then run
 ```bash
-build.sh
+./build.sh
+```
+
+Finally, to the run the game, use the run script
+```bash
+./run.sh
+```
+
+## Web
+
+Simply run
+
+```bash
+./build_web.sh
+```
+
+This will generate all needed files in bin/surge. To run the web app, use
+
+```bash
+./run_web.sh
 ```
 
 ## Windows
