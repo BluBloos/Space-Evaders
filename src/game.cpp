@@ -155,8 +155,8 @@ Game::Game() {
     //this->tanks.push_back()
     this->score = 0;
 
-    this->moonTexture = LoadTexture("../arts/moon.png");
-    this->enemyTexture = LoadTexture("../arts/enemy.png");
+    this->moonTexture = LoadTexture("arts/moon.png");
+    this->enemyTexture = LoadTexture("arts/enemy.png");
 
 }
 
@@ -303,7 +303,7 @@ void Game::GameUpdateAndRender() {
                 	this->switchGameOver();
 				}
 
-                std::cout << "x: " << coords.x << " y: " << coords.y << std::endl;
+                // std::cout << "x: " << coords.x << " y: " << coords.y << std::endl;
 
                 DrawText(FormatText("Score: %i", score), camera.target.x - 410, camera.target.y - 295, 30, RAYWHITE);
                 EndMode2D();

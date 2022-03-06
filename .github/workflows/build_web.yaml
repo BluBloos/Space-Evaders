@@ -1,0 +1,26 @@
+name: web build
+on:
+  push:
+    branches:    
+      - 'master'
+
+jobs:
+  build-test-ubuntu:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Checkout submodules
+        run: git submodule update --init
+      - name: Build for web
+        run: ./build_web.sh
+        shell: bash
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 8
+      - name: Install surge
+        run: npm install -g surge
+      - name: Publish to surge
+        run: surge build/raylib/surge ${{ secrets.SURGE_DOMAIN }} --token ${{ secrets.SURGE_TOKEN }}

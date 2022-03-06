@@ -5,7 +5,7 @@ Rocket::Rocket(float x, float y) {
     this->posX = x;
     this->posY = y;
     this->touched = false;
-    this->rocketTexture = LoadTexture("../arts/escape_rocket.png");
+    this->rocketTexture = LoadTexture("arts/escape_rocket.png");
 }
 
 Rocket::Rocket() {
