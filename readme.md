@@ -61,4 +61,8 @@ The easiest way to do this is by installing Raylib, then setting an environment 
 Then run
 ```bash
 build.bat
+cd bin
+SpaceEvaders.exe
 ```
+
+
