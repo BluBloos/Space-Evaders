@@ -8,7 +8,7 @@ This game was built as a course project for CMPE 320. This project was completed
 
 You can find a demo of the game at https://spacevaders.surge.sh
 
-**Disclaimer:** There are known bugs in the Web version of the game. Namely, you can "teleport" vertically through platforms, and the game begins with the user running out of oxygen. The web version of the game was prepared after the course, so these bugs come as a surpise. For the least buggy version of the game, build the macOS version.
+**Disclaimer:** There are known bugs in the Web version of the game. Namely, you can "teleport" vertically through platforms, and the game begins with the user running out of oxygen. The web version of the game was prepared after the course, so these bugs come as a surprise. For the least buggy version of the game, build the macOS version.
 
 # Steps for Building
 
